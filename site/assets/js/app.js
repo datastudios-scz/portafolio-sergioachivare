@@ -202,7 +202,16 @@ const rail = {
     this.packet.setAttribute('aria-hidden', 'true');
     nav.append(prev, ol, next, this.packet);
     document.body.append(nav);
-    this.nav = nav;
+    Object.assign(this, { nav, ol, slides });
+    // En pantallas angostas los nodos son solo un indicador de progreso (12 px no es un objetivo
+    // táctil válido): sin href ni presencia en el árbol de accesibilidad; se navega con ‹ ›.
+    const mode = () => {
+      const narrow = mqNarrow.matches;
+      this.nodes.forEach((a, k) => (narrow ? a.removeAttribute('href') : a.setAttribute('href', `#${slides[k].id}`)));
+      if (narrow) ol.setAttribute('aria-hidden', 'true'); else ol.removeAttribute('aria-hidden');
+    };
+    mode();
+    mqNarrow.addEventListener?.('change', mode);
     addEventListener('resize', () => this.place(deck.i, null, true));
   },
   stepBtn(dir, label) {
