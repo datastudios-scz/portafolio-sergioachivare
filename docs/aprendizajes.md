@@ -123,3 +123,41 @@ Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución �
 
 - **Problema:** un script Python escrito con `cat << 'EOF'` perdió los `\\`.
 - **Solución:** escribir archivos con la herramienta de edición, no con heredocs, cuando tengan barras invertidas.
+
+## 2026-11-13 · La animación de entrada descentraba los nodos del mapa
+
+- **Problema:** los nodos del mapa de IA, centrados con `transform: translate(-50%, -50%)`, saltaban de lugar al
+  entrar con `data-in="pop"`.
+- **Causa:** los `@keyframes` de entrada animan `transform` y reemplazan el `translate` del centrado.
+- **Solución:** centrar con la propiedad independiente `translate: -50% -50%`, que se suma al `transform` animado.
+- **Cómo evitarlo:** todo lo que se posiciona con `transform` y además tiene coreografía, usar `translate`/`scale`.
+
+## 2026-11-13 · El bloque de DAX se aplastaba a una línea en el celular
+
+- **Problema:** en el chat del visor, en pantallas chicas, la consulta DAX se veía como una raya.
+- **Causa:** el hilo es una columna flex de alto fijo; sus hijos tienen `flex-shrink: 1`, y un hijo con
+  `overflow: hidden` pierde su alto mínimo automático, así que se encoge hasta casi cero cuando el contenido no cabe.
+- **Solución:** `.vchat__thread > * { flex-shrink: 0 }`; el hilo se desplaza (`scrollTop`) para mostrar lo último.
+- **Cómo evitarlo:** en listas flex que deben desplazarse, sus elementos no se encogen.
+
+## 2026-11-13 · El chat a pantalla completa dejaba ver el borde del reporte
+
+- **Problema:** en maquetas angostas el panel del chat (`flex-basis: 100%`) dejaba asomar unos píxeles del reporte.
+- **Causa:** el reporte no puede bajar de su `padding` aunque tenga `min-width: 0`.
+- **Solución:** en `@container (max-width: 520px)` el chat se superpone (`position: absolute` + `translateX`).
+
+## 2026-11-13 · Pestañas que avanzan solas hacían saltar la diapositiva
+
+- **Problema:** con el recorrido guiado, la tira de pestañas subía y bajaba en cada cambio.
+- **Causa:** cada panel tiene otra altura y la diapositiva se centra vertical (`margin-block: auto`).
+- **Solución:** paneles apilados en la misma celda de grilla; los ocultos con `visibility: hidden` (siguen fuera del
+  árbol de accesibilidad y no reciben clics). El bloque mide lo que el más alto.
+- **Cómo evitarlo:** lo que cambia solo, sin que la persona lo pida, no debe mover nada alrededor.
+
+## 2026-11-13 · Textos tipeados por JS quedaban vacíos al imprimir y sin JS
+
+- **Problema:** en el PDF y sin JavaScript, las instrucciones de los agentes y la pregunta del chat salían vacías, y
+  los KPI de la vista previa en 0.
+- **Causa:** el HTML los traía vacíos y solo el JS los llenaba.
+- **Solución:** el texto final va en el HTML. En pantalla se oculta hasta que la escena arranca (si no, se ve un
+  instante durante la transición y luego se borra), y al salir de la diapositiva se restaura el estado final.

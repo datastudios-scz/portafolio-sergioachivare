@@ -105,6 +105,27 @@ Portada (oscura)                                Caso (clara)
 - Las maquetas usan su propia paleta clara (interfaz de producto) dentro de las diapositivas oscuras; el índigo y el
   azafrán siguen marcando el portafolio.
 
+## Tercera ronda (2026-11-13), pedidos del dueño
+
+- **Portada:** fuera "Hoy, Responsable Nacional de Business Intelligence…"; la propuesta queda sola.
+- **Login del portal copiado del producto real** (sus vistas y CSS, nunca sus datos ni su `.env`): fondo con el color
+  de la marca, tarjeta de vidrio al 82 % con canto especular (gradiente cónico enmascarado al borde) y dos ondas que
+  giran; etiquetas USUARIO / CONTRASEÑA en versalitas (como el real), campos `#f8fafc`, ojo en la contraseña, botón
+  INGRESAR con indicador de carga. Luz detrás de la tarjeta y viñeta al tono oscuro de la marca para dar profundidad.
+- **Chat como se usa de verdad:** no es una ventana suelta sino el panel lateral del visor del tablero, que se abre
+  desde la pestaña de vidrio del borde derecho y angosta el reporte. Paleta del producto: índigo `#6366f1`,
+  `#eef2ff`, `#c7d2fe`, texto `#111827`, bordes `#e5e7eb`, fondo `#f7f8fa`. Pasos con punto que late (verde al
+  terminar), DAX siempre visible con "Copiar", conclusión al final y botón "Graficar". Un cursor hace el recorrido
+  para que se entienda sin texto. En maquetas angostas el panel se superpone al reporte, como en el celular.
+- **Pestañas que no se pierden:** punto azafrán que late en cada pestaña no vista y barra de progreso azafrán bajo
+  la activa mientras el recorrido avanza solo. El control siempre lo gana la persona: al primer gesto se detiene.
+- **IA como mapa vivo, no como captura:** el orquestador (núcleo azafrán con anillo que late) al centro; a la
+  izquierda las fuentes (bases de datos, documentos, WhatsApp y correo), a la derecha los motores (IA en la nube,
+  base vectorial, servidor de IA local con LEDs), arriba y abajo lo que se entrega (tableros con chat, reportes y
+  automatizaciones). El código del agente ilumina en azafrán el camino que usa: el mensaje es "con código conecto
+  cualquier proceso con cualquier IA, en la nube o en servidores propios".
+- **Cierre:** "Gracias por tu visita a mi portafolio".
+
 ## Revisión contra lo genérico (antes de construir)
 
 | Idea inicial | Por qué era genérica | Cambio |

@@ -2,11 +2,6 @@
   "outDir": "site/assets/img",
   "defaults": {"widths":[640,1080,1920],"avif":60,"webp":82},
   "images": [
-    {"name":"portal-login-bpo","src":".canva-cache/media/MAGlkyDg3-M.png"},
-    {"name":"portal-login-bpo-2","src":".canva-cache/media/MAGqJdLvc04.png"},
-    {"name":"portal-login-gmasivos","src":".canva-cache/media/MAGlky70viA.png"},
-    {"name":"portal-tableros","src":".canva-cache/media/MAGlkyMUI4Q.png"},
-    {"name":"portal-tableros-marca","src":".canva-cache/media/MAGqJVr0J6Y.png"},
     {"name":"banca-monitor","src":".canva-cache/media/MAGDW1pKe8c.png","redact":[{"left":249,"top":188,"width":92,"height":44},{"left":249,"top":274,"width":92,"height":39},{"left":249,"top":352,"width":137,"height":214},{"left":828,"top":265,"width":364,"height":25}]},
     {"name":"banca-registros","src":".canva-cache/media/MAGDW8YdFKE.png","redact":[{"left":162,"top":111,"width":180,"height":360}]},
     {"name":"consumo-kpis","src":".canva-cache/media/MAGllDR_gdc.png","trim":true},
@@ -37,7 +32,6 @@
     {"name":"app-comercios-alta","src":".canva-cache/media/MAGllcvP7Es.png","widths":[400],"redact":[{"left":134,"top":176,"width":136,"height":38},{"left":134,"top":249,"width":176,"height":36}]},
     {"name":"app-comercios-panel","src":".canva-cache/media/MAGllQ3y3Dw.png","redact":[{"left":209,"top":122,"width":174,"height":77},{"left":209,"top":253,"width":177,"height":78},{"left":209,"top":406,"width":164,"height":232},{"left":836,"top":301,"width":426,"height":27}]},
     {"name":"web-pautas","src":".canva-cache/media/MAHUL_-GL8w.png"},
-    {"name":"web-ventas","src":".canva-cache/media/MAHUL_aEkdM.png"},
-    {"name":"ia-arquitectura","src":".canva-cache/media/MAHM78jk65k.png","widths":[640,1080,1536],"avif":64,"webp":84}
+    {"name":"web-ventas","src":".canva-cache/media/MAHUL_aEkdM.png"}
   ]
 }

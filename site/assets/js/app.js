@@ -362,9 +362,18 @@ function bindInputs() {
    ===================================================================== */
 const FX = {};
 const fx = {
-  init() { $$('[data-fx]').forEach((el) => FX[el.dataset.fx]?.init?.(el)); },
+  init() {
+    // cada instrucción de agente guarda su texto completo (viene en el HTML para imprimir y sin JS)
+    $$('.ide__prompt [data-q]').forEach((q) => { q.dataset.full = q.textContent; });
+    $$('[data-fx]').forEach((el) => FX[el.dataset.fx]?.init?.(el));
+  },
   enter(slide, first, resume) { if (slide) $$('[data-fx]', slide).forEach((el) => FX[el.dataset.fx]?.enter?.(el, first, resume)); },
-  leave(slide, pause) { if (slide) $$('[data-fx]', slide).forEach((el) => FX[el.dataset.fx]?.leave?.(el, pause)); },
+  leave(slide, pause) {
+    if (!slide) return;
+    $$('[data-fx]', slide).forEach((el) => FX[el.dataset.fx]?.leave?.(el, pause));
+    // al salir, la instrucción vuelve completa: así se imprime entera aunque se haya cortado a medias
+    $$('.ide__prompt [data-q]', slide).forEach((q) => { q.textContent = q.dataset.full; });
+  },
 };
 
 /* ---------- Portada: retrato que nace de un gráfico de dispersión ---------- */
@@ -588,7 +597,7 @@ function countUp(el, node, D = 1000) {
   el._raf.push(requestAnimationFrame(tick));
 }
 
-/* ---------- Portal BI: ingreso con la marca del cliente → sus tableros, y cambio de marca ---------- */
+/* ---------- Portal BI: login real (usuario, contraseña, Ingresar) → tableros, y cambio de marca ---------- */
 const BRANDS = [
   { name: 'ACME Analytics', brand: '#1F7A5C', brand2: '#0E4A36', acc: '#F5B400' },
   { name: 'Nordex Datos', brand: '#1B2C66', brand2: '#0C1638', acc: '#F2A93B' },
@@ -602,58 +611,116 @@ function setBrand(m, b) {
 }
 FX.portal = {
   enter(el) {
-    const m = $('.pmock', el);
+    const m = $('.pmock', el), user = $('[data-user]', m), pass = $('[data-pass]', m);
+    const inputs = $$('.plogin__input', m), btn = $('.plogin__btn', m);
     const at = seq(el);
     if (RM) { setBrand(m, BRANDS[0]); m.classList.add('is-app'); return; }
     let k = 0;
     const cycle = () => {
       el._seq = []; // los temporizadores anteriores ya se ejecutaron
       setBrand(m, BRANDS[k % BRANDS.length]);
-      m.classList.remove('is-app', 'is-press');
-      at(1500, () => m.classList.add('is-press'));
-      at(1750, () => { m.classList.remove('is-press'); m.classList.add('is-app'); });
-      at(5400, () => { k += 1; cycle(); });
+      m.classList.remove('is-app');
+      btn.classList.remove('is-busy', 'is-press');
+      inputs.forEach((i) => i.classList.remove('is-focus'));
+      at(450, () => inputs[0].classList.add('is-focus'));
+      let t = typeInto(at, user, 'mariana.s', 550, 75);
+      pass.textContent = '';
+      at(t + 200, () => { inputs[0].classList.remove('is-focus'); inputs[1].classList.add('is-focus'); });
+      t = typeInto(at, pass, '••••••••', t + 300, 65);
+      at(t + 250, () => { inputs[1].classList.remove('is-focus'); btn.classList.add('is-press'); });
+      at(t + 400, () => { btn.classList.remove('is-press'); btn.classList.add('is-busy'); });
+      at(t + 1250, () => { btn.classList.remove('is-busy'); m.classList.add('is-app'); });
+      at(t + 1250 + 3600, () => { k += 1; cycle(); });
     };
     cycle();
   },
   leave(el) { stopSeq(el); },
 };
 
-/* ---------- Portal BI con IA: pregunta → pasos → DAX → respuesta con gráfico ---------- */
+/* ---------- Portal BI con IA: el chat al costado del tablero, como se usa en el portal ---------- */
 FX.aichat = {
   enter(el) {
-    const q = $('[data-q]', el), qBox = $('.cmock__q', el), steps = $$('.cmock__steps li', el);
-    const dax = $('.cmock__dax', el), lines = $$('.code .l', el), ans = $('.cmock__answer', el);
-    const text = '¿Cómo van las ventas por sucursal este año?';
+    const m = $('.vmock', el), app = $('.vmock__app', m), cur = $('.vmock__cursor', m), tab = $('.vmock__tab', m);
+    const thread = $('.vchat__thread', m), hello = $('.vchat__hello', m), q = $('.vchat__q', m), steps = $$('.vchat__steps li', m);
+    const dax = $('.vchat__dax', m), lines = $$('.code .l', dax), ans = $('.vchat__ans', m), graf = $('.vchat__graf', m);
+    const chart = $('.vchat__chart', m), field = $('.vchat__field', m), typed = $('[data-q]', m);
+    const send = $('.vchat__send', m), close = $('.vchat__x', m);
+    const text = '¿Qué sucursal creció más este año?';
+    const parts = [q, dax, ans, graf, chart, ...steps];
+    const show = (n, on = true) => n.classList.toggle('is-shown', on);
     const at = seq(el);
     if (RM) {
+      m.classList.add('is-open');
+      hello.classList.add('is-gone');
       q.textContent = text;
-      qBox.classList.add('is-sent');
-      steps.forEach((s) => s.classList.add('is-shown', 'is-done'));
+      parts.forEach((n) => show(n));
+      steps.forEach((s) => s.classList.add('is-done'));
       lines.forEach((l) => l.classList.add('is-typed'));
-      dax.classList.add('is-shown');
-      ans.classList.add('is-shown');
+      chart.classList.add('is-drawn');
       return;
     }
+    // el cursor va al centro (o a un punto relativo) del elemento indicado
+    const moveTo = (node, fx = .5, fy = .5) => {
+      const a = app.getBoundingClientRect(), r = node.getBoundingClientRect();
+      cur.style.transform = `translate(${(r.left - a.left + r.width * fx).toFixed(1)}px, ${(r.top - a.top + r.height * fy).toFixed(1)}px)`;
+    };
+    const click = (node) => {
+      cur.classList.add('is-click');
+      node?.classList.add('is-press');
+      at(170, () => { cur.classList.remove('is-click'); node?.classList.remove('is-press'); });
+    };
+    const toBottom = () => { thread.scrollTop = thread.scrollHeight; };
     const run = () => {
       el._seq = [];
-      qBox.classList.remove('is-sent');
-      steps.forEach((s) => s.classList.remove('is-shown', 'is-done'));
+      m.classList.remove('is-open');
+      hello.classList.remove('is-gone');
+      parts.forEach((n) => show(n, false));
+      steps.forEach((s) => s.classList.remove('is-done'));
       lines.forEach((l) => l.classList.remove('is-typed'));
-      dax.classList.remove('is-shown');
-      ans.classList.remove('is-shown');
-      let t = typeInto(at, q, text, 450, 36) + 250;
-      at(t, () => qBox.classList.add('is-sent'));
-      steps.forEach((s, i) => {
-        at(t + 200 + i * 650, () => s.classList.add('is-shown'));
-        at(t + 760 + i * 650, () => s.classList.add('is-done'));
+      chart.classList.remove('is-drawn');
+      field.classList.remove('is-focus', 'has-text');
+      thread.scrollTop = 0;
+      cur.classList.remove('is-on');
+      cur.style.transition = 'none';
+      moveTo(app, .3, .85);
+      void cur.offsetWidth; // aplica la posición inicial sin animarla
+      cur.style.transition = '';
+      at(450, () => cur.classList.add('is-on'));
+      at(650, () => moveTo(tab, .45, .5));
+      at(1500, () => { click(tab); m.classList.add('is-open'); });
+      at(2350, () => moveTo(field, .25, .5));
+      at(3150, () => { click(); field.classList.add('is-focus', 'has-text'); });
+      let t = typeInto(at, typed, text, 3250, 42) + 250;
+      at(t, () => moveTo(send));
+      at(t + 800, () => {
+        click(send);
+        field.classList.remove('is-focus', 'has-text');
+        hello.classList.add('is-gone');
+        q.textContent = text;
+        show(q);
       });
-      t += 200 + steps.length * 650 + 250;
-      at(t, () => dax.classList.add('is-shown'));
-      lines.forEach((l, i) => at(t + 150 + i * 320, () => typeLine(l, 14)));
-      t += 150 + lines.length * 320 + 400;
-      at(t, () => ans.classList.add('is-shown'));
-      at(t + 7500, run);
+      t += 1050;
+      steps.forEach((s, i) => {
+        at(t + i * 650, () => { show(s); toBottom(); });
+        at(t + i * 650 + 560, () => s.classList.add('is-done'));
+      });
+      t += steps.length * 650 + 200;
+      at(t, () => { show(dax); toBottom(); });
+      lines.forEach((l, i) => at(t + 100 + i * 300, () => typeLine(l, 14)));
+      t += 100 + lines.length * 300 + 350;
+      at(t, () => { show(ans); show(graf); toBottom(); });
+      at(t + 900, () => moveTo(graf));
+      at(t + 1750, () => {
+        click(graf);
+        show(chart);
+        toBottom();
+        at(80, () => { chart.classList.add('is-drawn'); toBottom(); });
+      });
+      t += 1750 + 4300;
+      at(t, () => moveTo(close));
+      at(t + 850, () => { click(close); m.classList.remove('is-open'); });
+      at(t + 1450, () => cur.classList.remove('is-on'));
+      at(t + 2700, run);
     };
     run();
   },
@@ -715,7 +782,11 @@ FX.mcp = {
       },
     });
   },
-  leave(el) { stopSeq(el); },
+  leave(el) {
+    stopSeq(el);
+    // en reposo (e impresión) los KPI muestran su valor final
+    $$('[data-to]', el).forEach((n) => { n.textContent = numText(n, +n.dataset.to); });
+  },
 };
 
 FX.iac = {
@@ -730,6 +801,128 @@ FX.iac = {
     });
   },
   leave(el) { stopSeq(el); },
+};
+
+/* ---------- Pestañas: recorrido guiado ----------
+   Mientras nadie las toca, avanzan solas cada TAB_MS con una barra de progreso bajo la
+   pestaña activa; las que faltan ver laten. El primer clic (o el teclado) le da el
+   control a la persona y el avance automático se detiene para ese grupo. */
+const TAB_MS = 5000;
+function tabsStart(st) {
+  clearTimeout(st.timer);
+  st.paused = false;
+  st.box.classList.add('is-auto');
+  st.box.classList.remove('is-paused');
+  st.t0 = performance.now();
+  st.timer = setTimeout(() => {
+    const { tabs, select } = st.box._tabs;
+    const i = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+    select((i + 1) % tabs.length, false);
+    st.left = TAB_MS;
+    tabsStart(st);
+  }, st.left);
+}
+function tabsStop(st) {
+  clearTimeout(st.timer);
+  st.paused = false;
+  st.box.classList.remove('is-auto', 'is-paused');
+}
+FX.tabs = {
+  init(box) {
+    const st = { box, timer: 0, left: TAB_MS, t0: 0, paused: false, user: false };
+    box._auto = st;
+    box.style.setProperty('--tab-dur', `${TAB_MS}ms`);
+    const takeOver = () => { st.user = true; tabsStop(st); };
+    box.addEventListener('tabs:user', takeOver);
+    // tocar el contenido (p. ej. para desplazarse y leer en el celular) también le da el control
+    box.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') takeOver(); });
+    // con teclado o al abrir una captura, el panel no debe cambiar debajo de la persona
+    box.addEventListener('focusin', takeOver);
+    box.addEventListener('click', (e) => { if (e.target.closest('a.zoom')) takeOver(); });
+    box.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse' || !box.classList.contains('is-auto') || st.paused) return;
+      clearTimeout(st.timer);
+      st.left = Math.max(400, st.left - (performance.now() - st.t0));
+      st.paused = true;
+      box.classList.add('is-paused');
+    });
+    box.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'mouse' && st.paused && !st.user) tabsStart(st);
+    });
+  },
+  enter(box) {
+    const st = box._auto;
+    if (RM || st.user) return;
+    st.left = TAB_MS;
+    tabsStart(st);
+  },
+  leave(box) { tabsStop(box._auto); },
+};
+
+/* ---------- IA: mapa de integración ----------
+   Dos escenarios alternados; cada línea de código, al terminar de escribirse, ilumina
+   el tramo del mapa que usa (data-show → nodos y cables). */
+const AIMAP = [
+  {
+    text: 'Resume las ventas de hoy con IA local y mándaselas al gerente por WhatsApp',
+    done: 'Resumen enviado por WhatsApp en 3,2 s, sin que los datos salgan de la empresa',
+    show: { db: ['db'], local: ['local'], msg: ['msg'] },
+  },
+  {
+    text: 'Crea un asistente que responda preguntas sobre los contratos en PDF',
+    done: 'Asistente publicado en el portal: responde citando cada contrato',
+    show: { docs: ['docs', 'vec'], cloud: ['cloud'], dash: ['dash'] },
+  },
+];
+FX.aimap = {
+  init(el) { $('svg', el)?.pauseAnimations?.(); },
+  enter(el) {
+    const svg = $('svg', el), q = $('[data-q]', el), prompt = $('.ide__prompt', el), done = $('.ide__done', el);
+    const scenes = $$('.code[data-scene]', el);
+    const hot = (keys) => keys.forEach((k) => $$(`[data-l="${k}"], [data-n="${k}"]`, el).forEach((n) => n.classList.add('is-hot')));
+    const at = seq(el);
+    if (RM) {
+      scenes.forEach((p, i) => p.classList.toggle('is-on', i === 0));
+      q.textContent = AIMAP[0].text;
+      prompt.classList.add('is-sent');
+      $$('.l', scenes[0]).forEach((l) => l.classList.add('is-typed'));
+      Object.values(AIMAP[0].show).forEach(hot);
+      done.textContent = AIMAP[0].done;
+      done.classList.add('is-shown');
+      return;
+    }
+    svg?.unpauseAnimations?.();
+    let k = 0;
+    const run = () => {
+      el._seq = [];
+      const s = AIMAP[k % AIMAP.length], pre = scenes[k % AIMAP.length];
+      $$('.is-hot', el).forEach((n) => n.classList.remove('is-hot'));
+      done.classList.remove('is-shown');
+      done.textContent = s.done; // oculto, pero ya ocupa su lugar: el mapa no se mueve al aparecer
+      prompt.classList.remove('is-sent');
+      scenes.forEach((p) => {
+        p.classList.toggle('is-on', p === pre);
+        $$('.l', p).forEach((l) => l.classList.remove('is-typed'));
+      });
+      let t = typeInto(at, q, s.text, 500, 26) + 200;
+      at(t, () => prompt.classList.add('is-sent'));
+      t += 400;
+      $$('.l', pre).forEach((l) => {
+        const dur = Math.max(1, l.textContent.length) * 16;
+        at(t, () => typeLine(l, 16));
+        if (l.dataset.show) at(t + dur, () => hot(s.show[l.dataset.show]));
+        t += dur + 220;
+      });
+      at(t + 200, () => done.classList.add('is-shown'));
+      at(t + 6200, () => { k += 1; run(); });
+    };
+    run();
+  },
+  leave(el) {
+    stopSeq(el);
+    $('svg', el)?.pauseAnimations?.();
+    $('.ide__done', el).textContent = AIMAP[0].done; // en reposo (e impresión) queda el primer escenario
+  },
 };
 
 /* ---------- Banca: mensajes del bot ---------- */
@@ -757,6 +950,7 @@ function initTabs() {
   $$('[data-tabs]').forEach((box) => {
     const tabs = $$('[role="tab"]', box);
     const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+    let ready = false; // al arrancar no se mide nada (evita forzar el layout)
     const select = (i, focus) => {
       tabs.forEach((t, j) => {
         const on = j === i;
@@ -764,18 +958,27 @@ function initTabs() {
         t.tabIndex = on ? 0 : -1;
         panels[j].hidden = !on;
       });
+      tabs[i].classList.remove('is-new');
       if (focus) tabs[i].focus();
+      // si quedó fuera de vista en la tira de pestañas (móvil), se acerca
+      const list = tabs[i].parentElement;
+      if (ready && list.scrollWidth > list.clientWidth) list.scrollTo({ left: tabs[i].offsetLeft - (list.clientWidth - tabs[i].offsetWidth) / 2, behavior: RM ? 'auto' : 'smooth' });
     };
+    box._tabs = { tabs, select };
+    const user = () => box.dispatchEvent(new CustomEvent('tabs:user'));
     tabs.forEach((t, i) => {
-      t.addEventListener('click', () => select(i));
+      t.addEventListener('click', () => { user(); select(i); });
       t.addEventListener('keydown', (e) => {
         const k = { ArrowRight: (i + 1) % tabs.length, ArrowLeft: (i - 1 + tabs.length) % tabs.length, Home: 0, End: tabs.length - 1 }[e.key];
         if (k === undefined) return;
         e.preventDefault();
+        user();
         select(k, true);
       });
     });
+    tabs.forEach((t) => t.classList.add('is-new'));
     select(Math.max(0, tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true')));
+    ready = true;
   });
 }
 

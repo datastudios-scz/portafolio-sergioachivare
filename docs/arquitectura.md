@@ -5,7 +5,7 @@ Skill de referencia para cambios: `motion-slides` (motor y convenciones) y `web-
 ## Archivos
 
 ```
-src/index.html              FUENTE del HTML (16 <section class="slide">, imágenes como <x-img>)
+src/index.html              FUENTE del HTML (17 <section class="slide">, imágenes como <x-img>)
 tools/build.mjs             src/index.html → site/index.html (expande <x-img>, versiona CSS/JS, limpia variantes huérfanas)
 tools/images.json           qué imagen de Canva va con qué nombre, anchos, recortes y zonas a difuminar
 tools/portrait.mjs          recorte del retrato + versión de 120 px para el retrato de puntos
@@ -16,7 +16,7 @@ tools/contact_sheet.mjs     hoja de contacto de una carpeta de imágenes (revisi
 site/                       lo que se publica (estático, sin build en el servidor)
   index.html                GENERADO: no editar a mano
   assets/css/app.css        estilos (tokens → base → cromo → deck → componentes → diapositivas → diálogos → animación → sin JS → impresión)
-  assets/js/app.js          motor + efectos, un solo módulo (~28 KB sin comprimir)
+  assets/js/app.js          motor + efectos, un solo módulo (~46 KB sin comprimir, 15 KB con gzip)
   assets/img/               GENERADO por npm run img y tools/portrait.mjs (+ manifest.json)
   assets/fonts/archivo-es.woff2   Archivo variable recortada (ver performance.md)
 ```
@@ -43,7 +43,7 @@ site/                       lo que se publica (estático, sin build en el servid
 - Scroll interno primero: si `.slide__scroll` aún puede moverse en esa dirección, el gesto es suyo. En táctil se mira
   el estado al empezar el gesto, así llegar al borde no salta de diapositiva sin un gesto nuevo.
 - Rutas: `history.replaceState` con `#id` al navegar; `pushState` cuando se llega por un enlace (el botón Atrás vuelve).
-- Accesibilidad: diapositivas inactivas con `inert`; región `aria-live` anuncia "N de 16: título"; con teclado el foco
+- Accesibilidad: diapositivas inactivas con `inert`; región `aria-live` anuncia "N de 17: título"; con teclado el foco
   pasa al `h2` (`tabindex="-1"`) de la nueva diapositiva.
 - Sin JS: el `<html>` queda con `no-js` y el sitio es una página larga normal (pestañas abiertas, imágenes enlazadas).
 - Impresión / "Descargar en PDF" (en el índice): fuerza la carga de todas las imágenes y usa `@media print`
@@ -55,14 +55,25 @@ site/                       lo que se publica (estático, sin build en el servid
 |---|---|---|---|
 | `portrait` | Portada | Gráfico de dispersión → retrato de ~6.600 puntos (1.600 en móvil); lente con el cursor / toque para ver la foto | Una vez; después queda quieto (sin bucle) |
 | `count` | Perfil | Cifras que cuentan hasta su valor (1,1 s) | Cada vez que se entra |
-| `portal` | Portal BI | Maqueta: ingreso con la marca → tableros; cambia de marca cada ~5 s (3 marcas de ejemplo) | En bucle mientras la diapositiva está activa |
-| `aichat` | Portal BI con IA | Pregunta tipeada → pasos → DAX línea a línea → respuesta con barras | Bucle cada ~16 s |
+| `portal` | Portal BI | Login como el real: se tipean usuario y contraseña, "Ingresar" muestra su indicador de carga → tableros; la vuelta siguiente usa otra marca (3 de ejemplo) | Bucle de ~6,9 s mientras la diapositiva está activa |
+| `aichat` | Portal BI con IA | Un cursor abre la pestaña IA del visor (el reporte se angosta), tipea la pregunta y la envía; pasos con punto que late → DAX línea a línea → respuesta → clic en "Graficar" → barras; cierra el panel | Bucle de ~20 s |
 | `mcp` | Rubros | VS Code: el agente pide el tablero, se tipean medidas y visuales y la vista previa se arma (KPIs cuentan, barras, línea) | Bucle |
 | `iac` | Infraestructura como código | Terminal: comandos de Azure CLI y de la API de Fabric; el árbol de recursos aparece a medida que se crean | Bucle |
 | `chat` | Banca | Mensajes del bot aparecen uno a uno (datos ficticios) | Cada vez que se entra |
+| `tabs` | Marketing, Seguridad, Apps, Web | Recorrido guiado: avanza de pestaña cada 5 s con barra de progreso; las no vistas laten (`is-new`). Se pausa con el mouse encima y se apaga para siempre en ese grupo al primer clic, tecla, toque, foco o zoom | Mientras la diapositiva está activa; nunca con movimiento reducido |
+| `aimap` | IA | Mapa: orquestador + 8 nodos con paquetes (SVG `animateMotion`). El agente tipea la instrucción y el código; cada línea con `data-show` ilumina sus nodos y cables (`is-hot`). Alterna 2 escenarios | Bucle; el SVG se pausa (`pauseAnimations`) fuera de la diapositiva |
 
 Las escenas de código comparten `codeScene()` (tipeo de la instrucción, líneas con `data-show` que revelan algo al
 terminar) y todas usan `seq(el)`/`stopSeq(el)`: temporizadores cancelables que se limpian al salir de la diapositiva.
+El cursor del visor se mueve con `transform` hacia el centro del elemento medido con `getBoundingClientRect()`
+relativo a `.vmock__app` (así funciona a cualquier tamaño de maqueta).
+
+Estado final sin animación: las instrucciones de los agentes, la pregunta del chat, el resultado del mapa de IA y los
+KPI de la vista previa ya vienen escritos en el HTML (se ven sin JS y al imprimir). En pantalla, la instrucción se
+oculta (`.slide:not(.is-play)`) hasta que la escena la vuelve a tipear, y `fx.leave` la restaura completa al salir.
+
+Pestañas: los paneles se apilan en la misma celda de una grilla y los ocultos usan `visibility: hidden` en lugar de
+`display: none`, así el bloque mide lo que el panel más alto y la tira de pestañas no salta al cambiar.
 
 ### Coreografía CSS (`data-in` + `.is-play`)
 
