@@ -1,0 +1,59 @@
+{
+  "outDir": "site/assets/img",
+  "defaults": { "widths": [640, 1080, 1920], "avif": 60, "webp": 82 },
+  "images": [
+    { "name": "portal-login-bpo", "src": ".canva-cache/media/MAGlkyDg3-M.png" },
+    { "name": "portal-login-bpo-2", "src": ".canva-cache/media/MAGqJdLvc04.png" },
+    { "name": "portal-login-gmasivos", "src": ".canva-cache/media/MAGlky70viA.png" },
+    { "name": "portal-tableros", "src": ".canva-cache/media/MAGlkyMUI4Q.png" },
+    { "name": "portal-tableros-marca", "src": ".canva-cache/media/MAGqJVr0J6Y.png" },
+
+    { "name": "banca-monitor", "src": ".canva-cache/media/MAGDW1pKe8c.png" },
+    { "name": "banca-registros", "src": ".canva-cache/media/MAGDW8YdFKE.png" },
+
+    { "name": "consumo-kpis", "src": ".canva-cache/media/MAGllDR_gdc.png" },
+    { "name": "consumo-mapa", "src": ".canva-cache/media/MAGDW9rqp28.png" },
+    { "name": "consumo-ciudad", "src": ".canva-cache/media/MAGllHXHSWI.png" },
+    { "name": "consumo-impulsacion", "src": ".canva-cache/media/MAGllL9PtT0.png" },
+
+    { "name": "rrhh", "src": ".canva-cache/media/MAGllEGqAis.png" },
+
+    { "name": "mkt-meta", "src": ".canva-cache/media/MAHULgCszSI.png" },
+    { "name": "mkt-facebook", "src": ".canva-cache/media/MAHULrV9bu4.png" },
+    { "name": "mkt-instagram", "src": ".canva-cache/media/MAHULi1ilMk.png" },
+    { "name": "mkt-anuncios", "src": ".canva-cache/media/MAGllO49aAw.png" },
+    { "name": "mkt-tiktok", "src": ".canva-cache/media/MAGllEDf3vw.png" },
+
+    { "name": "sec-ad", "src": ".canva-cache/media/MAGllMc9EQ0.png" },
+    { "name": "sec-exchange", "src": ".canva-cache/media/MAGllP2xxfY.png" },
+    { "name": "sec-accesos", "src": ".canva-cache/media/MAGllKy9aRA.png" },
+    { "name": "sec-admins", "src": ".canva-cache/media/MAGllEeqpzc.png" },
+
+    { "name": "fabric-etl", "src": ".canva-cache/media/MAHUL6chq5w.png" },
+
+    { "name": "app-asistencia-login", "src": ".canva-cache/media/MAGllYiaIUU.png", "widths": [400],
+      "redact": [ { "left": 24, "top": 120, "width": 312, "height": 38 }, { "left": 24, "top": 219, "width": 312, "height": 37 } ] },
+    { "name": "app-asistencia-registro", "src": ".canva-cache/media/MAGllRcbmgk.png", "widths": [400] },
+    { "name": "app-asistencia-historial", "src": ".canva-cache/media/MAGllfpu7Do.png", "widths": [400] },
+    { "name": "app-asistencia-panel", "src": ".canva-cache/media/MAGllVny9PI.png" },
+
+    { "name": "app-accidentes-menu", "src": ".canva-cache/media/MAGlleqYuWY.png", "widths": [400] },
+    { "name": "app-accidentes-estados", "src": ".canva-cache/media/MAGllbmWV8k.png", "widths": [400] },
+    { "name": "app-accidentes-formulario", "src": ".canva-cache/media/MAGllbr_zWo.png", "widths": [400],
+      "redact": [ { "left": 38, "top": 220, "width": 272, "height": 35 }, { "left": 38, "top": 312, "width": 272, "height": 35 } ] },
+    { "name": "app-accidentes-panel", "src": ".canva-cache/media/MAGllSn8EgU.png" },
+
+    { "name": "app-comercios-login", "src": ".canva-cache/media/MAGllYj32x8.png", "widths": [400],
+      "redact": [ { "left": 36, "top": 129, "width": 291, "height": 35 }, { "left": 36, "top": 221, "width": 291, "height": 36 } ] },
+    { "name": "app-comercios-registros", "src": ".canva-cache/media/MAGllWk6Vjs.png", "widths": [400],
+      "redact": [ { "left": 25, "top": 140, "width": 122, "height": 390 } ] },
+    { "name": "app-comercios-alta", "src": ".canva-cache/media/MAGllcvP7Es.png", "widths": [400],
+      "redact": [ { "left": 134, "top": 176, "width": 136, "height": 38 }, { "left": 134, "top": 249, "width": 176, "height": 36 } ] },
+    { "name": "app-comercios-panel", "src": ".canva-cache/media/MAGllQ3y3Dw.png" },
+
+    { "name": "web-pautas", "src": ".canva-cache/media/MAHUL_-GL8w.png" },
+    { "name": "web-ventas", "src": ".canva-cache/media/MAHUL_aEkdM.png" },
+
+    { "name": "ia-arquitectura", "src": ".canva-cache/media/MAHM78jk65k.png", "widths": [640, 1080, 1536], "avif": 64, "webp": 84 }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "portafolio-sergioachivare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portafolio web de Sergio Achivare: sitio estático paginado como diapositivas.",
+  "type": "module",
+  "scripts": {
+    "img": "node .claude/skills/web-perf/scripts/optimize_images.mjs tools/images.json",
+    "serve": "python -m http.server 8080 --directory site"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
+}

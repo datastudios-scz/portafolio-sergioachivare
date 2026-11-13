@@ -4,7 +4,8 @@
 // config: {
 //   "outDir": "site/assets/img",
 //   "defaults": { "widths": [640, 1280, 1920], "avif": 60, "webp": 82 },
-//   "images": [ { "src": ".canva-cache/media/MAxxx.png", "name": "dash-bcp", "widths": [...], "crop": {left,top,width,height}, "trim": true } ]
+//   "images": [ { "src": ".canva-cache/media/MAxxx.png", "name": "dash-bcp", "widths": [...], "crop": {left,top,width,height}, "trim": true,
+//                 "redact": [ {left,top,width,height,sigma?} ] } ]
 // }
 // Requiere `sharp` instalado en el proyecto (npm i -D sharp).
 import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
@@ -33,7 +34,16 @@ for (const img of cfg.images) {
   let base = sharp(img.src, { failOn: 'none' });
   if (img.crop) base = base.extract(img.crop);
   if (img.trim) base = base.trim({ threshold: 8 });
-  const buf = await base.png().toBuffer();
+  let buf = await base.png().toBuffer();
+  // redact: difumina zonas con datos sensibles (credenciales, documentos, teléfonos)
+  if (img.redact?.length) {
+    const layers = [];
+    for (const r of img.redact) {
+      const patch = await sharp(buf).extract(r).blur(r.sigma ?? 7).toBuffer();
+      layers.push({ input: patch, left: r.left, top: r.top });
+    }
+    buf = await sharp(buf).composite(layers).png().toBuffer();
+  }
   const meta = await sharp(buf).metadata();
   const srcSize = (await stat(img.src)).size;
   totalIn += srcSize;

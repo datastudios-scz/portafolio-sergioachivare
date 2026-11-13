@@ -1,0 +1,101 @@
+# Dirección de diseño
+
+Skill activa: `frontend-design` (2026-11-13). Este documento es la referencia para cualquier cambio visual.
+
+## Brief
+
+- **Sujeto:** Sergio Achivare Balderrama — Data Engineer y Responsable Nacional de Business Intelligence,
+  con trayectoria en seguridad de la información (IAM), auditoría de sistemas, apps AppSheet, Node.js e IA local.
+- **Audiencia:** reclutadores, gerentes de TI y empresas de Bolivia/LatAm que evalúan contratarlo.
+- **Trabajo principal del sitio:** en menos de un minuto, demostrar que construye soluciones de datos
+  de punta a punta que **ahorran dinero** (portal BI tokenizado) y llevar a un contacto por WhatsApp o correo.
+
+## Concepto: "de los datos a la persona"
+
+El vocabulario visual sale del oficio de BI: gráficos de dispersión, linaje de datos, páginas de reporte.
+
+1. **Momento firma (el único movimiento no provocado por el usuario):** en la portada, una nube de puntos
+   con forma de *gráfico de dispersión* se reorganiza y forma el retrato de Sergio en matriz de puntos.
+   Después queda quieto; solo reacciona al puntero.
+2. **Riel de linaje:** la paginación es una línea de linaje con un nodo por diapositiva, agrupada por capítulos.
+   Al navegar, un pulso viaja del nodo anterior al nuevo (movimiento que responde a una acción).
+3. **Páginas de reporte:** las diapositivas de casos son claras como un lienzo de reporte; las narrativas, índigo.
+
+## Tokens
+
+### Color
+
+| Token | Hex | Uso |
+|---|---|---|
+| `--ink` Índigo noche | `#0D0A35` | Fondo de diapositivas oscuras |
+| `--indigo` Índigo marca | `#120052` | Paneles sobre oscuro (el color de marca original) |
+| `--paper` Papel | `#F3F1FB` | Fondo de diapositivas claras (lienzo de reporte) |
+| `--saffron` Azafrán | `#FFC233` | Acento principal: estado activo, dato clave, CTA. **En fondo claro solo como relleno, nunca como texto** |
+| `--violet` Violeta señal | `#6E5BFF` | Líneas de datos, foco secundario; texto en claro usa `#4B39E0` |
+| `--lilac` Lila | `#E9E5FF` | Texto sobre oscuro |
+
+Contrastes verificados: lila/índigo noche ≈ 15:1 · azafrán/índigo noche ≈ 11:1 · texto `#17133F`/papel ≈ 15:1 ·
+`#4B39E0`/papel ≈ 6:1.
+
+### Tipografía
+
+Una familia: **Archivo** (variable, ejes `wdth` 62–125 y `wght` 100–900), self-hosted en woff2 latin.
+El eje de ancho da dos voces sin cargar dos fuentes: condensada para titulares (eco del Anton que
+Sergio usaba en Canva) y ancho normal para lectura. Números con `tabular-nums`. Sin monoespaciada.
+
+| Rol | Tamaño | Ancho / peso | Interlínea |
+|---|---|---|---|
+| Nombre (portada) | `clamp(3.2rem, 9vw, 8.5rem)` | 68 / 800 | 0.9 |
+| Título de diapositiva (h2) | `clamp(2.2rem, 4.6vw, 4.2rem)` | 72 / 750 | 0.98 |
+| Subtítulo (h3) | `clamp(1.25rem, 1.8vw, 1.6rem)` | 90 / 650 | 1.15 |
+| Entrada (lead) | `clamp(1.05rem, 1.3vw, 1.3rem)` | 100 / 400 | 1.5 |
+| Texto | `1rem` | 100 / 400 | 1.55 |
+| Cifra KPI | `clamp(2.6rem, 5vw, 4.5rem)` | 62 / 800 | 1 |
+
+Párrafos ≤ 62ch. Mayúsculas sostenidas: nunca en etiquetas ni párrafos.
+
+### Layout
+
+- Retícula de 12 columnas, medianil 24 px, márgenes `clamp(20px, 5vw, 96px)`. Contenido **alineado a la
+  izquierda** (los reportes se leen de izquierda a derecha); solo el contacto final va centrado.
+- Barra superior: monograma, capítulo actual, Menú, Contacto. Riel de linaje a la derecha (escritorio) o
+  abajo (móvil).
+- Plantillas distintas según el tipo de contenido para romper la monotonía del original:
+  portada, perfil (cifras + tabla de empresas), pilares, diagrama animado, pitch con mockup,
+  índice de rubros (chips tipo segmentador), caso con galería, caso con pestañas, apps con teléfonos, contacto.
+
+```
+Portada (oscura)                                Caso (clara)
+┌───────────────────────────────────────┬─┐    ┌───────────────────────────────────────┬─┐
+│ SA  Inicio                Menú Contacto│ │    │ SA  Business Intelligence   Menú  …    │ │
+│                                        │●│    │ Título del caso                        │●│
+│ Sergio            · .:::::::::.        │ │    │ Contexto en 2 líneas      ┌──────────┐ │ │
+│ Achivare         .:::(retrato):.       │●│    │ • Qué resuelve            │ captura  │ │●│
+│ Balderrama        ':::::::::::'        │ │    │ • Con qué                 │ (zoom)   │ │ │
+│ Data Engineer y líder de BI…           │●│    │ [pestañas / miniaturas]   └──────────┘ │●│
+│ [Ver proyectos] [WhatsApp]             │ │    │                                        │ │
+└───────────────────────────────────────┴─┘    └───────────────────────────────────────┴─┘
+```
+
+### Principios
+
+- **Una sola audacia:** el retrato de puntos. Todo lo demás, sobrio.
+- **El movimiento explica datos:** cifras que cuentan, líneas que se trazan, paquetes que fluyen por el
+  diagrama. Nada de "aparecer deslizando" en cada bloque de texto.
+- **La estructura es información:** numeración solo donde hay secuencia real (pasos del portal, orden de
+  diapositivas en el índice). Sin etiquetas decorativas sobre cada título.
+- **Sin kit SaaS:** nada de tarjetas idénticas con sombra gris. Contenedores tipo "visual de reporte":
+  regla superior fina, radios distintos según jerarquía.
+- **Calidad mínima no negociable:** responsive a 360 px, foco visible (anillo azafrán), `prefers-reduced-motion`,
+  contraste AA.
+
+## Revisión contra lo genérico (antes de construir)
+
+| Idea inicial | Por qué era genérica | Cambio |
+|---|---|---|
+| Red de partículas de fondo en la portada | Es el fondo "tech" por defecto | Retrato que nace de un gráfico de dispersión |
+| Negro + cian neón | Cliché "near-black + acento ácido" | Índigo de marca + azafrán complementario |
+| Roles rotando con efecto máquina de escribir | Segundo movimiento ambiental compitiendo | Roles en una frase; el único movimiento ambiental es el retrato |
+| Etiquetas en mono mayúsculas sobre cada título | Cromo de plantilla | El capítulo vive solo en la barra superior |
+| Puntos de paginación genéricos | No dicen nada del sujeto | Riel de linaje de datos |
+| Treemap de habilidades con tamaños | Inventaría cifras que no existen | Pilares con herramientas reales, sin números falsos |
