@@ -94,6 +94,31 @@ Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución �
   bloqueados (auto-modificación / interferir con otras cargas). Alternativas usadas: comandos git ya permitidos y
   otro puerto para el servidor de pruebas.
 
+## 2026-11-13 · `String.replace` convierte `$$` en `$`
+
+- **Problema:** después de insertar código con un script, la página fallaba con `$(...).forEach is not a function`.
+- **Causa:** en el texto de reemplazo de `String.prototype.replace`, `$$` significa "un signo `$`".
+- **Solución:** usar `split(a).join(b)` o una función como reemplazo cuando el texto nuevo tenga `$`.
+
+## 2026-11-13 · Líneas en blanco entre líneas de código
+
+- **Problema:** los bloques de código de las maquetas mostraban una línea vacía entre cada línea.
+- **Causa:** `<pre>` con `white-space: pre` conserva los saltos del HTML **y** cada `<span class="l">` es un bloque.
+- **Solución:** `.code { white-space: normal }` y `.code .l { white-space: pre }`.
+
+## 2026-11-13 · Unidades `cqw` en el propio contenedor
+
+- **Problema:** el tamaño de letra de las maquetas no escalaba con su ancho.
+- **Causa:** las unidades `cqw` se resuelven contra el contenedor **ancestro**, no contra el elemento que declara
+  `container-type`.
+- **Solución:** `container-type` en el padre (`.split__media`, `.code-fig`) y `font-size: …cqw` en la maqueta.
+
+## 2026-11-13 · Comillas invertidas en scripts de bash
+
+- **Problema:** al escribir Markdown con `node -e "…"`, desaparecían los textos entre comillas invertidas.
+- **Causa:** dentro de comillas dobles, bash ejecuta `` `…` `` como sustitución de comandos.
+- **Solución:** escribir documentos con la herramienta de edición de archivos, nunca a través de la shell.
+
 ## 2026-11-13 · Heredoc de bash se comía las barras invertidas
 
 - **Problema:** un script Python escrito con `cat << 'EOF'` perdió los `\\`.

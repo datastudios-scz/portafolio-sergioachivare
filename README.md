@@ -1,12 +1,13 @@
 # Portafolio de Sergio Achivare
 
-Portafolio web de **Sergio Achivare Balderrama**, Data Engineer y Responsable Nacional de Business Intelligence:
-una presentación interactiva (diapositivas a pantalla completa con motion graphics) migrada y rediseñada desde Canva.
+Portafolio web de **Sergio Achivare Balderrama**, arquitecto de soluciones de datos e IA (hoy Responsable Nacional
+de Business Intelligence): una presentación interactiva (diapositivas a pantalla completa con motion graphics)
+migrada y rediseñada desde Canva.
 
 **Sitio:** https://datastudios-scz.github.io/portafolio-sergioachivare/
 
-- 16 diapositivas: perfil, stack, arquitectura de BI, portal BI tokenizado, tableros por rubro, ciberseguridad,
-  ingeniería de datos, apps, sistemas web, IA y contacto.
+- 17 diapositivas: perfil, pilares, arquitectura completa, Portal BI tokenizado + IA (con maquetas animadas),
+  tableros por rubro y construcción con MCP, ciberseguridad, infraestructura como código, apps, sistemas web, IA y contacto.
 - Navegación con rueda, teclado, swipe, índice y enlaces directos (`#portal`, `#seguridad`, …). Descarga en PDF.
 - Estático, sin frameworks: HTML + CSS + un módulo JS. Imágenes AVIF/WebP retina, fuente propia recortada.
 - Datos personales de terceros difuminados en las capturas.

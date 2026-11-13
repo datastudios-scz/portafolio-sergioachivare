@@ -55,9 +55,21 @@ site/                       lo que se publica (estático, sin build en el servid
 |---|---|---|---|
 | `portrait` | Portada | Gráfico de dispersión → retrato de ~6.600 puntos (1.600 en móvil); lente con el cursor / toque para ver la foto | Una vez; después queda quieto (sin bucle) |
 | `count` | Perfil | Cifras que cuentan hasta su valor (1,1 s) | Cada vez que se entra |
-| `flow` | Arquitectura | Cables SVG que se trazan + paquetes que viajan (SMIL) | Pausado fuera de la diapositiva y con la pestaña oculta |
-| `steps` | Portal | Pasos 1-2-3 sincronizados con la pantalla del portátil; avance automático cada 3,4 s | Se detiene al pasar el mouse, enfocar o elegir un paso |
+| `portal` | Portal BI | Maqueta: ingreso con la marca → tableros; cambia de marca cada ~5 s (3 marcas de ejemplo) | En bucle mientras la diapositiva está activa |
+| `aichat` | Portal BI con IA | Pregunta tipeada → pasos → DAX línea a línea → respuesta con barras | Bucle cada ~16 s |
+| `mcp` | Rubros | VS Code: el agente pide el tablero, se tipean medidas y visuales y la vista previa se arma (KPIs cuentan, barras, línea) | Bucle |
+| `iac` | Infraestructura como código | Terminal: comandos de Azure CLI y de la API de Fabric; el árbol de recursos aparece a medida que se crean | Bucle |
 | `chat` | Banca | Mensajes del bot aparecen uno a uno (datos ficticios) | Cada vez que se entra |
+
+Las escenas de código comparten `codeScene()` (tipeo de la instrucción, líneas con `data-show` que revelan algo al
+terminar) y todas usan `seq(el)`/`stopSeq(el)`: temporizadores cancelables que se limpian al salir de la diapositiva.
+
+### Coreografía CSS (`data-in` + `.is-play`)
+
+Los elementos con `data-in="rise|drop|pop|up|grow-x|grow-y"` y `style="--d:.4s"` animan cuando el motor agrega
+`.is-play` a la diapositiva (300 ms después de empezar la transición) y vuelven a su estado inicial cuando se sale.
+Pilares, capas de la arquitectura, receta del portal, mosaicos de rubros y funciones del chat usan esto, sin JS propio.
+Con movimiento reducido, sin JS o al imprimir se ve directamente el estado final.
 
 Contrato de un efecto: `FX.nombre = { init(el), enter(el, primeraVez, reanudar), leave(el, pausa) }`. Nada de
 `requestAnimationFrame` corriendo fuera de su diapositiva.

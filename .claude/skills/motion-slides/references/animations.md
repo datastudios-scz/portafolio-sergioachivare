@@ -1,23 +1,26 @@
 # Coreografía de animaciones
 
-Principio (docs/design.md): **un solo momento ambiental** — el retrato de la portada. Todo lo demás se mueve porque
-la persona hizo algo (navegó, eligió una pestaña, abrió una imagen) o porque el movimiento *explica un dato*.
+Principio: el dueño valora mucho las animaciones (2026-11-13), pero cada una debe **explicar algo**: un dato que
+cuenta, una estructura que se construye, un producto que se usa. Nada de "aparecer deslizando" genérico.
 
 | Momento | Duración | Curva | Reduced motion |
 |---|---|---|---|
 | Transición entre diapositivas | 760 ms | `cubic-bezier(.77,0,.18,1)` + línea azafrán en el borde | fundido 180 ms |
-| Pulso del riel (nodo anterior → nuevo) | ~600 ms + 18 ms por diapositiva saltada | resorte `k=260, d=24` en CSS `linear()` | salto directo |
-| Retrato: ejes + puntos (0–0,9 s), tendencia (0,75–1,15 s), armado (1,25–3,3 s) | ~3,3 s | aparición `springEase(320,30)`, armado `springEase(140,18)` con escalonado por altura | retrato final directo |
+| Pulso del riel | ~600 ms + 18 ms por diapositiva saltada | resorte `k=260, d=24` en CSS `linear()` | salto directo |
+| Retrato de puntos (portada) | ~3,3 s, una sola vez | `springEase(320,30)` aparición, `springEase(140,18)` armado | retrato final |
 | Cifras del perfil | 1,1 s | ease-out cúbica | valor final |
-| Cables de la arquitectura | 620 ms c/u, escalonados 110 ms | `cubic-bezier(.65,0,.35,1)` | dibujados, sin paquetes |
-| Paquetes de datos | 2,8 s por recorrido, en bucle | lineal (SMIL) | — |
-| Pasos del portal | cada 3,4 s; pantalla con fundido de 0,6 s | ease-out | sin avance automático |
-| Mensajes del bot | uno cada 0,95 s | `msg-in` 0,35 s | todos visibles |
-| Panel de pestaña | 0,45 s | `panel-in` (opacidad + 8 px) | instantáneo |
+| Pilares: base → pilares (escalonados 120 ms) → viga | ~2 s | `in-rise` (clip-path), `in-drop` con rebote | estado final |
+| Arquitectura: capa 1 → 2 → 3 → clientes, paquetes que suben | ~2,2 s + bucle | `in-up`, `in-grow-y`; paquetes 1,4 s lineal | estado final, sin paquetes |
+| Portal: ingreso → tableros (tarjetas escalonadas 70 ms) → cambio de marca | ciclo ~5,4 s | transiciones de color 0,7 s | primera marca, sin ciclo |
+| Chat con IA: pregunta → pasos → DAX → barras | ~8 s + 7,5 s de pausa | tipeo 36 ms/carácter; DAX por pasos | todo visible |
+| VS Code + MCP: instrucción → medidas → visuales → vista previa | ~6 s + 6,5 s de pausa | 11 ms/carácter; KPIs cuentan 1 s | todo visible |
+| Terminal de infraestructura: comandos → árbol de recursos | ~7 s + 7 s de pausa | 8 ms/carácter | todo visible |
+| Mosaicos de rubros | escalonados 50 ms | `in-pop` | estado final |
 
 ## Reglas
 
 - Animar solo `transform`, `opacity`, `clip-path` y `stroke-dashoffset`.
-- Lo que aparece no debe mover lo demás: reservar su espacio (`visibility` en lugar de `display`).
-- Resortes de forma cerrada (`springEase`) en lugar de easings genéricos para lo que "tiene masa"; ver `app.js`.
-- Ningún bucle corre fuera de su diapositiva ni con la pestaña oculta.
+- Lo que aparece no debe mover lo demás: reservar su espacio (`visibility`/`opacity`, no `display`).
+- Todo bucle se detiene al salir de la diapositiva o con la pestaña oculta (`seq`/`stopSeq`, `fx.leave`).
+- Estados "ocultos hasta animar" siempre bajo `.js` y con su versión final en `@media print`.
+- Las maquetas usan datos y marcas de ejemplo; nunca datos reales de clientes.

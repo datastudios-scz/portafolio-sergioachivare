@@ -89,6 +89,22 @@ Portada (oscura)                                Caso (clara)
 - **Calidad mínima no negociable:** responsive a 360 px, foco visible (anillo azafrán), `prefers-reduced-motion`,
   contraste AA.
 
+## Segunda ronda (2026-11-13), pedidos del dueño
+
+- **Sin saltos:** se quitaron los botones que llevaban a otra diapositiva (portada, pilares, rubros). La navegación
+  queda en riel, índice, flechas y Contacto. Nada que parezca deshabilitado o gris.
+- **Título que abarca todo:** "Arquitecto de soluciones de datos e IA"; el cargo de Responsable Nacional de BI pasa a
+  ser credencial debajo de la propuesta.
+- **Pilares literales, pero modernos:** columnas geométricas con capitel, fuste estriado y basa, sin ornamento clásico;
+  la viga dice qué sostienen y la base, la experiencia que los sostiene a ellos.
+- **Arquitectura como pila construida:** la numeración 1-2-3 se justifica porque es el orden real de construcción.
+- **Portal BI + IA como producto:** dos diapositivas con maquetas HTML (no capturas) para que se vean nítidas, se
+  animen y muestren el uso real: ingreso con la marca del cliente, tableros asignados, chat que muestra su DAX.
+- **El código como protagonista:** dos escenas de editor (MCP construyendo un tablero; Azure CLI levantando la
+  plataforma) muestran que el trabajo se hace con código y agentes, no a mano.
+- Las maquetas usan su propia paleta clara (interfaz de producto) dentro de las diapositivas oscuras; el índigo y el
+  azafrán siguen marcando el portafolio.
+
 ## Revisión contra lo genérico (antes de construir)
 
 | Idea inicial | Por qué era genérica | Cambio |
