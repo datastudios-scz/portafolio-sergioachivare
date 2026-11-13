@@ -1,0 +1,18 @@
+# Dependencias y herramientas
+node_modules/
+
+# Extracción cruda de Canva (pesada, se regenera con la skill canva-extract)
+.canva-cache/
+
+# Reportes y capturas de pruebas
+.lh/
+.shots/
+*.log
+
+# Editor local
+.vscode/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
