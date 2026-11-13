@@ -336,11 +336,9 @@ strong { font-weight: 680; }
 .js .portrait.is-revealed .portrait__photo { opacity: 1; -webkit-mask-image: none; mask-image: none; }
 .portrait__dots { transition: opacity .35s; }
 .portrait.is-revealed .portrait__dots { opacity: .0; }
-.portrait__hint {
-  margin-top: 6px; text-align: center; font-size: .85rem; color: var(--muted);
-  opacity: 0; transition: opacity .6s;
-}
-.portrait__hint.is-on { opacity: 1; }
+/* sin fundido: un texto a medio aparecer no cumple contraste mínimo */
+.portrait__hint { margin-top: 6px; text-align: center; font-size: .85rem; color: var(--muted); visibility: hidden; }
+.portrait__hint.is-on { visibility: visible; }
 .hint-touch { display: none; }
 @media (hover: none) { .hint-hover { display: none; } .hint-touch { display: inline; } }
 .no-js .portrait__dots, .no-js .portrait__hint { display: none; }

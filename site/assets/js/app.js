@@ -112,7 +112,9 @@ const deck = {
     to.inert = false;
 
     const sc = $('.slide__scroll', to);
-    if (sc) { sc.scrollTop = dir < 0 && !instant ? sc.scrollHeight : 0; requestAnimationFrame(() => updateMore(sc)); }
+    // en la carga inicial no se toca scrollTop: forzaría el layout dentro de la tarea del script
+    if (sc && !instant) sc.scrollTop = dir < 0 ? sc.scrollHeight : 0;
+    if (sc) requestAnimationFrame(() => updateMore(sc));
 
     const done = () => {
       if (from && from !== to) { from.classList.remove('is-active', 'is-leaving'); from.inert = true; }
@@ -228,7 +230,9 @@ const rail = {
       a.classList.toggle('is-done', j < k);
       if (j === k) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
     });
-    this.place(k, from, instant);
+    // medir el riel fuerza layout: en la carga inicial se hace en el cuadro siguiente
+    if (instant) requestAnimationFrame(() => this.place(deck.i, null, true));
+    else this.place(k, from, instant);
   },
   place(k, from, instant) {
     const node = this.nodes[k];
