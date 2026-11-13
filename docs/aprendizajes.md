@@ -161,3 +161,12 @@ Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución �
 - **Causa:** el HTML los traía vacíos y solo el JS los llenaba.
 - **Solución:** el texto final va en el HTML. En pantalla se oculta hasta que la escena arranca (si no, se ve un
   instante durante la transición y luego se borra), y al salir de la diapositiva se restaura el estado final.
+
+## 2026-11-13 · La TBT de Lighthouse móvil saltaba de 0 a 490 ms sin cambiar nada
+
+- **Problema:** cinco corridas seguidas sobre el mismo sitio publicado dieron TBT 170, 30, 50, 490 y 0 ms.
+- **Causa:** el throttling por defecto es *simulado*: toma lo que dura cada tarea en este equipo y lo multiplica
+  por 4. Si Windows está ocupado en ese momento, una tarea de 15 ms pasa a "60 ms" y cuenta como larga.
+- **Solución:** reportar la mediana de varias corridas y confirmar con un perfil real: Playwright + CDP con
+  `Emulation.setCPUThrottlingRate` (×4) y `Profiler` para ver qué función gasta el tiempo.
+- **Cómo evitarlo:** no correr Lighthouse con otras cargas en paralelo (otro Chrome, compilaciones, capturas).

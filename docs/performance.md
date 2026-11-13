@@ -6,15 +6,23 @@ Skill: `web-perf`. Medido sobre el sitio publicado (GitHub Pages, con compresió
 
 | Métrica | Meta | Medido |
 |---|---|---|
-| Peso total de la carga inicial (comprimido) | ≤ 300 KB | **123 KB** |
-| JS propio sin comprimir | ≤ 60 KB | ~30 KB (12 KB transferidos) |
-| LCP móvil | ≤ 2,0 s | **1,4–1,6 s** |
+| Peso total de la carga inicial (comprimido) | ≤ 300 KB | **142 KB** |
+| JS propio sin comprimir | ≤ 60 KB | ~47 KB (16 KB transferidos) |
+| LCP móvil | ≤ 2,0 s | **1,3–1,6 s** |
 | CLS | ≤ 0,02 | **0** |
-| TBT móvil | ≤ 100 ms | **0–20 ms** |
-| Lighthouse móvil | 95 / 95 / 100 / 100 | **100 / 100 / 100 / 100** |
+| TBT móvil | ≤ 100 ms | **50 ms** de mediana (5 corridas; ver nota) |
+| Lighthouse móvil | 95 / 95 / 100 / 100 | **98 / 100 / 100 / 100** de mediana |
 | Lighthouse escritorio | — | **100 / 100 / 100 / 100** |
 
-Carga inicial por tipo (transferido): HTML 16 KB · fuente 52 KB · imágenes 34 KB · CSS 9 KB · JS 12 KB.
+Carga inicial por tipo (transferido, 2026-11-13, tercera ronda): HTML 22 KB · fuente 52 KB · imágenes 34 KB ·
+CSS 17 KB · JS 16 KB.
+
+**Nota sobre la TBT.** Lighthouse móvil usa throttling *simulado*: multiplica por 4 lo que dura cada tarea en el
+equipo que mide. Con el equipo ocupado aparecen tareas largas que un celular real no tendría: en 5 corridas seguidas
+la TBT fue 170, 30, 50, 490 y 0 ms. Un perfil local con la CPU frenada ×4 de verdad (Playwright + CDP,
+`Emulation.setCPUThrottlingRate`) da solo dos tareas de 51 y 57 ms (TBT ≈ 8 ms). Lo más costoso del arranque es el
+retrato de puntos (`renderPortrait`: ~420 ms repartidos en ~200 cuadros de 2 ms con CPU ×4). Si algún día hace
+falta bajar más: menos puntos en móvil o 30 cuadros por segundo durante los 3 s del armado.
 Las capturas de cada diapositiva se descargan cuando esa diapositiva queda al lado de la actual.
 
 ## Mediciones
@@ -25,6 +33,7 @@ Las capturas de cada diapositiva se descargan cuando esa diapositiva queda al la
 | 2026-11-13 | Fuente recortada (90 → 53 KB) | 98 / 95 / 100 / 100 | 1,7 s | 140 ms | 123 KB |
 | 2026-11-13 | Sin layout forzado al arrancar + arreglos de A11y | **100 / 100 / 100 / 100** | 1,4–1,6 s | 0–20 ms | 123 KB |
 | 2026-11-13 | Rediseño v2: 17 diapositivas, 4 maquetas animadas, íconos SVG (HTML 91 KB sin comprimir) | 99 / 100 / 100 / 100 | 1,6 s | 80 ms | 134 KB |
+| 2026-11-13 | Tercera ronda: login y visor con chat como el producto real, pestañas guiadas, mapa de IA; se quitan 6 capturas (HTML 96 KB, JS 47 KB sin comprimir) | 98 / 100 / 100 / 100 (mediana de 5; Perf 88–100) | 1,3–1,6 s | 50 ms (mediana; 0–490) | 142 KB |
 
 (La variación de LCP entre corridas en vivo es de ±0,3 s por la red; se toman dos corridas.)
 
