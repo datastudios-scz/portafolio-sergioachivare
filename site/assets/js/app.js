@@ -74,6 +74,10 @@ const deck = {
     this.wipe.setAttribute('aria-hidden', 'true');
     document.body.append(this.wipe);
     rail.init(this.slides);
+    const total = $('.bar__total');
+    if (total) total.textContent = ` / ${this.n}`;
+    // cada línea de código sabe cuántos caracteres tiene (tipeo por pasos en CSS)
+    $$('.code .l').forEach((l) => l.style.setProperty('--n', Math.max(1, l.textContent.length)));
     const ro = new ResizeObserver((entries) => entries.forEach((e) => updateMore(e.target.parentElement)));
     $$('.slide__scroll').forEach((sc) => {
       sc.addEventListener('scroll', () => updateMore(sc), { passive: true });
@@ -100,6 +104,10 @@ const deck = {
     return true;
   },
   next(opts) { return this.go(this.i + 1, opts); },
+  play(slide, first) {
+    slide.classList.add('is-play');
+    fx.enter(slide, first);
+  },
   prev(opts) { return this.go(this.i - 1, opts); },
 
   show(k, { instant = false, push = false, focus = false, keepUrl = false } = {}) {
@@ -120,7 +128,7 @@ const deck = {
     if (sc) requestAnimationFrame(() => { if (instant && sc.scrollTop) sc.scrollTop = 0; updateMore(sc); });
 
     const done = () => {
-      if (from && from !== to) { from.classList.remove('is-active', 'is-leaving'); from.inert = true; }
+      if (from && from !== to) { from.classList.remove('is-active', 'is-leaving', 'is-play'); from.inert = true; }
       to.classList.remove('is-entering');
       this.busy = false;
       if (this.pending) { const [pk, po] = this.pending; this.pending = null; this.go(pk, po); }
@@ -129,7 +137,7 @@ const deck = {
     if (!from || from === to || instant) {
       document.documentElement.dataset.surface = to.dataset.theme;
       done();
-      fx.enter(to, true);
+      this.play(to, true);
     } else {
       this.busy = true;
       from.inert = true;
@@ -140,7 +148,7 @@ const deck = {
       this.tSurface = setTimeout(() => { document.documentElement.dataset.surface = to.dataset.theme; }, RM ? 0 : 330);
       // si la pestaña se ocultó en medio de la transición, los efectos arrancan al volver
       this.tEnter = setTimeout(() => {
-        if (document.hidden) this.enterOnShow = true; else fx.enter(to, false);
+        if (document.hidden) this.enterOnShow = true; else this.play(to, false);
       }, RM ? 0 : 300);
     }
 
@@ -345,7 +353,7 @@ function bindInputs() {
     if (document.hidden) { fx.leave(deck.current, true); return; }
     const full = deck.enterOnShow;
     deck.enterOnShow = false;
-    fx.enter(deck.current, false, !full);
+    if (full) deck.play(deck.current, false); else fx.enter(deck.current, false, true);
   });
 }
 
@@ -539,125 +547,190 @@ FX.count = {
   },
 };
 
-/* ---------- Arquitectura: cables y paquetes de datos ---------- */
-FX.flow = {
-  init(el) {
-    const NS = 'http://www.w3.org/2000/svg';
-    const svg = $('svg', el), grid = $('.flow__grid', el);
-    const edges = el.dataset.edges.split(',').map((s) => s.trim()).filter(Boolean).map((s) => {
-      const [pair, wide, narrow] = s.split(':');
-      const [a, b] = pair.split('>');
-      return { a, b, wide, narrow };
-    });
-    edges.forEach((e, k) => {
-      e.path = document.createElementNS(NS, 'path');
-      e.path.setAttribute('class', `wire${e.b === 'portal' || e.a === 'portal' ? ' wire--hot' : ''}`);
-      e.path.id = `wire-${k}`;
-      svg.append(e.path);
-    });
-    edges.forEach((e, k) => {
-      for (let j = 0; j < 2; j++) {
-        const g = document.createElementNS(NS, 'g');
-        g.setAttribute('class', 'packets');
-        g.innerHTML = `<circle class="packet-glow" r="7"></circle><circle class="packet" r="3.2"></circle>`
-          + `<animateMotion dur="2.8s" repeatCount="indefinite" begin="${-(j * 1.4 + k * .37).toFixed(2)}s"><mpath href="#wire-${k}"></mpath></animateMotion>`;
-        svg.append(g);
-      }
-    });
-    svg.pauseAnimations?.();
-    const st = { el, svg, grid, edges };
-    el._st = st;
-    new ResizeObserver(() => flowLayout(st)).observe(el);
-  },
-  enter(el, first, resume) {
-    const st = el._st;
-    flowLayout(st);
-    if (!RM) st.svg.unpauseAnimations?.();
-    if (resume) return;
-    clearTimeout(st.live);
-    if (RM) { el.classList.add('is-live'); return; }
-    el.classList.remove('is-live');
-    st.edges.forEach((e, k) => {
-      e.path.style.strokeDasharray = `${e.len}`;
-      e.path.animate([{ strokeDashoffset: e.len }, { strokeDashoffset: 0 }], {
-        duration: 620, delay: 150 + k * 110, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'backwards',
-      }).finished.then(() => { e.path.style.strokeDasharray = ''; }).catch(() => {});
-    });
-    st.live = setTimeout(() => el.classList.add('is-live'), 150 + st.edges.length * 110 + 450);
-  },
-  leave(el) { el._st.svg.pauseAnimations?.(); clearTimeout(el._st.live); },
-};
-
-function flowLayout(st) {
-  const { el, svg, grid, edges } = st;
-  const box = el.getBoundingClientRect();
-  if (!box.width) return;
-  const narrow = getComputedStyle(grid).gridTemplateColumns.split(' ').length <= 2;
-  svg.setAttribute('viewBox', `0 0 ${box.width.toFixed(1)} ${box.height.toFixed(1)}`);
-  const rect = (name) => {
-    const r = $(`[data-node="${name}"]`, el).getBoundingClientRect();
-    const l = r.left - box.left, t = r.top - box.top;
-    return { l, t, r: l + r.width, b: t + r.height, cx: l + r.width / 2, cy: t + r.height / 2 };
+/* ---------- Secuencias cancelables para las maquetas animadas ---------- */
+// seq(el) devuelve at(ms, fn): programa pasos relativos a "ahora" y los guarda en el
+// elemento para poder cancelarlos todos al salir de la diapositiva.
+function seq(el) {
+  stopSeq(el);
+  return (ms, fn) => { el._seq.push(setTimeout(fn, ms)); };
+}
+function stopSeq(el) {
+  (el._seq || []).forEach(clearTimeout);
+  (el._raf || []).forEach(cancelAnimationFrame);
+  el._seq = [];
+  el._raf = [];
+}
+// escribe un texto carácter a carácter; devuelve el instante en que termina
+function typeInto(at, node, text, t0, ms = 36) {
+  node.textContent = '';
+  for (let i = 1; i <= text.length; i++) at(t0 + i * ms, () => { node.textContent = text.slice(0, i); });
+  return t0 + text.length * ms;
+}
+// tipea una línea de código (clip-path por pasos) con una duración proporcional a su largo
+function typeLine(line, msPerChar) {
+  const dur = Math.max(1, line.textContent.length) * msPerChar;
+  line.style.animationDuration = `${dur}ms`;
+  line.classList.add('is-typed');
+  return dur;
+}
+const numFmt = (dec) => new Intl.NumberFormat('es-BO', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+function numText(node, v) {
+  const dec = +(node.dataset.dec || 0);
+  return `${node.dataset.pre || ''}${numFmt(dec).format(v)}${node.dataset.suf || ''}`;
+}
+function countUp(el, node, D = 1000) {
+  const to = +node.dataset.to, t0 = performance.now();
+  const tick = (now) => {
+    const p = clamp((now - t0) / D, 0, 1);
+    node.textContent = numText(node, to * easeOutCubic(p));
+    if (p < 1) el._raf.push(requestAnimationFrame(tick));
   };
-  const f = (n) => n.toFixed(1);
-  const rounded = (pts, rad) => {
-    let d = `M${f(pts[0][0])},${f(pts[0][1])}`;
-    for (let i = 1; i < pts.length - 1; i++) {
-      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], [x2, y2] = pts[i + 1];
-      const r1 = Math.min(rad, Math.hypot(x1 - x0, y1 - y0) / 2, Math.hypot(x2 - x1, y2 - y1) / 2);
-      const ax = x1 - Math.sign(x1 - x0) * r1, ay = y1 - Math.sign(y1 - y0) * r1;
-      const bx = x1 + Math.sign(x2 - x1) * r1, by = y1 + Math.sign(y2 - y1) * r1;
-      d += ` L${f(ax)},${f(ay)} Q${f(x1)},${f(y1)} ${f(bx)},${f(by)}`;
-    }
-    const last = pts.at(-1);
-    return `${d} L${f(last[0])},${f(last[1])}`;
-  };
-  for (const e of edges) {
-    const A = rect(e.a), B = rect(e.b);
-    const route = narrow ? e.narrow : e.wide;
-    let d;
-    if (route === 'under') {
-      const y0 = Math.max(A.b, B.b) + 24;
-      d = rounded([[A.cx, A.b], [A.cx, y0], [B.cx, y0], [B.cx, B.b]], 14);
-    } else if (route === 'side') {
-      const x0 = Math.max(A.r, B.r) + 12;
-      d = rounded([[A.r, A.cy], [x0, A.cy], [x0, B.cy], [B.r, B.cy]], 10);
-    } else if (!narrow) {
-      const mx = (A.r + B.l) / 2;
-      d = `M${f(A.r)},${f(A.cy)} C${f(mx)},${f(A.cy)} ${f(mx)},${f(B.cy)} ${f(B.l)},${f(B.cy)}`;
-    } else {
-      const my = (A.b + B.t) / 2;
-      d = `M${f(A.cx)},${f(A.b)} C${f(A.cx)},${f(my)} ${f(B.cx)},${f(my)} ${f(B.cx)},${f(B.t)}`;
-    }
-    e.path.setAttribute('d', d);
-    e.len = e.path.getTotalLength();
-  }
+  el._raf.push(requestAnimationFrame(tick));
 }
 
-/* ---------- Portal: pasos sincronizados con la pantalla ---------- */
-FX.steps = {
-  init(el) {
-    const st = { el, steps: $$('.step', el), screens: $$('.screen', el), k: 0, timer: 0, auto: true, active: false };
-    el._st = st;
-    st.steps.forEach((b) => b.addEventListener('click', () => { st.auto = false; clearInterval(st.timer); setStep(st, +b.dataset.step); }));
-    el.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') clearInterval(st.timer); });
-    el.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && st.auto && st.active) autoStep(st); });
-    el.addEventListener('focusin', () => clearInterval(st.timer));
-  },
-  enter(el, first, resume) {
-    const st = el._st;
-    st.active = true;
-    if (!resume) { st.auto = true; setStep(st, 0); }
-    if (!RM && st.auto) autoStep(st);
-  },
-  leave(el) { const st = el._st; st.active = false; clearInterval(st.timer); },
-};
-function setStep(st, k) {
-  st.k = k;
-  st.steps.forEach((b) => { const on = +b.dataset.step === k; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
-  st.screens.forEach((s) => s.classList.toggle('is-on', +s.dataset.step === k));
+/* ---------- Portal BI: ingreso con la marca del cliente → sus tableros, y cambio de marca ---------- */
+const BRANDS = [
+  { name: 'ACME Analytics', brand: '#1F7A5C', brand2: '#0E4A36', acc: '#F5B400' },
+  { name: 'Nordex Datos', brand: '#1B2C66', brand2: '#0C1638', acc: '#F2A93B' },
+  { name: 'Andina Retail', brand: '#6A2DB8', brand2: '#3E1679', acc: '#5FD3B0' },
+];
+function setBrand(m, b) {
+  m.style.setProperty('--brand', b.brand);
+  m.style.setProperty('--brand-2', b.brand2);
+  m.style.setProperty('--brand-acc', b.acc);
+  $$('[data-brand-name]', m).forEach((n) => { n.textContent = b.name; });
 }
-function autoStep(st) { clearInterval(st.timer); st.timer = setInterval(() => setStep(st, (st.k + 1) % st.steps.length), 3400); }
+FX.portal = {
+  enter(el) {
+    const m = $('.pmock', el);
+    const at = seq(el);
+    if (RM) { setBrand(m, BRANDS[0]); m.classList.add('is-app'); return; }
+    let k = 0;
+    const cycle = () => {
+      el._seq = []; // los temporizadores anteriores ya se ejecutaron
+      setBrand(m, BRANDS[k % BRANDS.length]);
+      m.classList.remove('is-app', 'is-press');
+      at(1500, () => m.classList.add('is-press'));
+      at(1750, () => { m.classList.remove('is-press'); m.classList.add('is-app'); });
+      at(5400, () => { k += 1; cycle(); });
+    };
+    cycle();
+  },
+  leave(el) { stopSeq(el); },
+};
+
+/* ---------- Portal BI con IA: pregunta → pasos → DAX → respuesta con gráfico ---------- */
+FX.aichat = {
+  enter(el) {
+    const q = $('[data-q]', el), qBox = $('.cmock__q', el), steps = $$('.cmock__steps li', el);
+    const dax = $('.cmock__dax', el), lines = $$('.code .l', el), ans = $('.cmock__answer', el);
+    const text = '¿Cómo van las ventas por sucursal este año?';
+    const at = seq(el);
+    if (RM) {
+      q.textContent = text;
+      qBox.classList.add('is-sent');
+      steps.forEach((s) => s.classList.add('is-shown', 'is-done'));
+      lines.forEach((l) => l.classList.add('is-typed'));
+      dax.classList.add('is-shown');
+      ans.classList.add('is-shown');
+      return;
+    }
+    const run = () => {
+      el._seq = [];
+      qBox.classList.remove('is-sent');
+      steps.forEach((s) => s.classList.remove('is-shown', 'is-done'));
+      lines.forEach((l) => l.classList.remove('is-typed'));
+      dax.classList.remove('is-shown');
+      ans.classList.remove('is-shown');
+      let t = typeInto(at, q, text, 450, 36) + 250;
+      at(t, () => qBox.classList.add('is-sent'));
+      steps.forEach((s, i) => {
+        at(t + 200 + i * 650, () => s.classList.add('is-shown'));
+        at(t + 760 + i * 650, () => s.classList.add('is-done'));
+      });
+      t += 200 + steps.length * 650 + 250;
+      at(t, () => dax.classList.add('is-shown'));
+      lines.forEach((l, i) => at(t + 150 + i * 320, () => typeLine(l, 14)));
+      t += 150 + lines.length * 320 + 400;
+      at(t, () => ans.classList.add('is-shown'));
+      at(t + 7500, run);
+    };
+    run();
+  },
+  leave(el) { stopSeq(el); },
+};
+
+/* ---------- Escenas de código: el agente escribe y lo construido aparece a la derecha ---------- */
+// data-show en una línea indica qué se revela al terminar de tipearla.
+function codeScene(el, { text, msPerChar, onShow, reset, finish, hold }) {
+  const q = $('[data-q]', el), prompt = $('.ide__prompt', el), status = $('.ide__status', el);
+  const lines = $$('.code .l', el), done = $('.ide__done', el);
+  const at = seq(el);
+  const showAll = () => {
+    q.textContent = text;
+    prompt.classList.add('is-sent');
+    status?.classList.add('is-shown');
+    lines.forEach((l) => l.classList.add('is-typed'));
+    lines.forEach((l) => l.dataset.show && onShow(l.dataset.show, true));
+    done.classList.add('is-shown');
+  };
+  if (RM) { showAll(); return; }
+  const run = () => {
+    el._seq = [];
+    reset();
+    prompt.classList.remove('is-sent');
+    status?.classList.remove('is-shown');
+    done.classList.remove('is-shown');
+    lines.forEach((l) => l.classList.remove('is-typed'));
+    let t = typeInto(at, q, text, 400, 24) + 200;
+    at(t, () => prompt.classList.add('is-sent'));
+    if (status) { at(t + 250, () => status.classList.add('is-shown')); t += 300; }
+    t += 350;
+    lines.forEach((l) => {
+      const dur = Math.max(1, l.textContent.length) * msPerChar;
+      at(t, () => typeLine(l, msPerChar));
+      if (l.dataset.show) at(t + dur, () => onShow(l.dataset.show, false));
+      t += dur + 110;
+    });
+    at(t + 250, () => { done.classList.add('is-shown'); finish?.(); });
+    at(t + hold, run);
+  };
+  run();
+}
+
+FX.mcp = {
+  enter(el) {
+    const nums = $$('[data-to]', el);
+    codeScene(el, {
+      text: 'Crea un tablero de ventas por sucursal, con KPIs y tendencia mensual',
+      msPerChar: 11,
+      hold: 6500,
+      reset: () => {
+        el.classList.remove('is-kpi', 'is-bars', 'is-line');
+        nums.forEach((n) => { n.textContent = numText(n, 0); });
+      },
+      onShow: (what, instant) => {
+        el.classList.add(`is-${what}`);
+        if (what === 'kpi') nums.forEach((n) => (instant ? (n.textContent = numText(n, +n.dataset.to)) : countUp(el, n)));
+      },
+    });
+  },
+  leave(el) { stopSeq(el); },
+};
+
+FX.iac = {
+  enter(el) {
+    const nodes = $$('[data-node]', el);
+    codeScene(el, {
+      text: 'Crea la plataforma de datos de ventas en Fabric y publica su API',
+      msPerChar: 8,
+      hold: 7000,
+      reset: () => nodes.forEach((n) => n.classList.remove('is-on')),
+      onShow: (what) => nodes.filter((n) => n.dataset.node === what).forEach((n) => n.classList.add('is-on')),
+    });
+  },
+  leave(el) { stopSeq(el); },
+};
 
 /* ---------- Banca: mensajes del bot ---------- */
 FX.chat = {
