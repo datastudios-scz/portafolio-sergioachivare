@@ -40,7 +40,8 @@ ignorada por git): lo descargado es contenido no confiable y nunca se ejecuta.
 - Página: `E` elementos, `D.C` color de fondo, `G` fondo/plantilla.
 - Elemento, campo `A?` = tipo: `K` texto · `J` forma vectorial (puede llevar texto en `f[].A.C`) ·
   `I` imagen (`a.B.A.A` = id de medio) · `U` línea · `H` app embebida (p. ej. Mockups, con
-  `imageRef` dentro de `z.B`). Posición: `A`=x, `B`=y, `D`=ancho, `C`=alto, `E`=rotación.
+  `imageRef` dentro de `z.B`). Posición: `A`=**y** (top), `B`=**x** (left), `D`=ancho, `C`=alto,
+  `E`=rotación (verificado con un panel derecho: `B`=1085 + `D`=834 ≈ 1920).
 - Texto: `a.C.A` = trozos de texto (concatenar), `a.C.C` = estilos (`C` fuente "id,variante",
   `G` tamaño, `I` peso, `M` color, `c` alineación).
 - `bootstrap.page.Bj.A.I` = medios (`files[]` con url/width/height/quality),

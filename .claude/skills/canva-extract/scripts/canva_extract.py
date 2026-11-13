@@ -97,7 +97,8 @@ def text_info(tobj):
 
 def normalize(e, fonts):
     t = e.get('A?')
-    out = {'type': TYPES.get(t, t), 'x': rnd(e.get('A')), 'y': rnd(e.get('B')),
+    # En Canva: A = top (y), B = left (x), D = ancho, C = alto
+    out = {'type': TYPES.get(t, t), 'x': rnd(e.get('B')), 'y': rnd(e.get('A')),
            'w': rnd(e.get('D')), 'h': rnd(e.get('C'))}
     if isinstance(e.get('E'), (int, float)) and e.get('E'):
         out['rot'] = rnd(e['E'])
