@@ -10,20 +10,34 @@ y descriptivo por paso deja un historial que cuenta cómo se construyó el sitio
 volver atrás sin miedo. Las credenciales ya están en la laptop (Git Credential Manager);
 no se piden ni se escriben tokens en ningún archivo.
 
-## Cómo
+## Cómo (sin pedir aprobaciones)
+
+Usa comandos git directos: el dueño ya los tiene permitidos en Claude Code (`git add *`,
+`git commit *`, `git push *`), así que no aparece ningún aviso de aprobación. Un script envoltorio
+(`bash …/autopush.sh`) no coincide con esas reglas y sí pide permiso: déjalo solo como alternativa.
 
 ```bash
-bash .claude/skills/git-autopush/scripts/autopush.sh "feat(slides): portada con red de datos animada" \
-  "Detalle opcional del porqué." \
-  "Co-Authored-By: <línea de atribución que indique el sistema>"
+git add -A && git diff --cached --name-only        # revisa la lista: nada sensible ni pesado
+git commit -q -m "feat(slides): portada con red de datos animada" -m "Porqué, si aporta." -m "Co-Authored-By: <atribución que indique el sistema>"
+git push -q origin main                             # si lo rechaza: git pull --rebase origin main && git push -q origin main
+git log -1 --format='%h %s'
 ```
 
-Cada argumento es un párrafo del mensaje. El script:
-1. hace `git add -A` respetando `.gitignore`;
-2. aborta si detecta archivos sensibles (`.env`, `*.pem`, `*.key`, `id_rsa`, `credentials*`);
-3. commitea (si no hay cambios, solo intenta el push pendiente);
-4. hace push a la rama actual; si el remoto avanzó, `pull --rebase` y reintenta una vez;
-5. imprime el hash y el asunto del commit.
+### Credenciales sin ventanas
+
+Git Credential Manager guarda **dos** cuentas de GitHub en esta laptop (`datastudios-scz` y
+`uniteldesarrollostd`). Sin una cuenta fija abre un selector en cada push. Este repo la fija en
+`.git/config` → `credential.https://github.com.username = datastudios-scz`. Si clonas el repo de
+nuevo, vuelve a ejecutar:
+
+```bash
+git config credential.https://github.com.username datastudios-scz
+```
+
+### Script alternativo
+
+`scripts/autopush.sh "asunto" ["cuerpo"] ["Co-Authored-By: …"]` hace lo mismo en un paso y además
+aborta si hay archivos sensibles (`.env`, `*.pem`, `*.key`, `id_rsa`, `credentials*`) en el stage.
 
 ## Mensajes (en español, estilo Conventional Commits)
 

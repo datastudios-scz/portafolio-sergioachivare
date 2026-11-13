@@ -23,6 +23,33 @@ Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución �
 - **Causa:** la consola de Windows usa cp1252; los archivos estaban bien en UTF-8.
 - **Solución:** `PYTHONIOENCODING=utf-8` al imprimir; nunca "corregir" los datos.
 
+## 2026-11-13 · GitHub pedía aprobación en cada push
+
+- **Problema:** cada push abría una ventana de GitHub pidiendo aprobación/selección de cuenta.
+- **Causa:** Git Credential Manager tiene **dos** cuentas de GitHub guardadas (`datastudios-scz` y
+  `uniteldesarrollostd`); sin una cuenta fija, pregunta cuál usar. Además, empujar desde un script
+  envoltorio no coincidía con las reglas `git push *` ya permitidas en Claude Code.
+- **Solución:** `git config credential.https://github.com.username datastudios-scz` (solo este repo) y
+  hacer commit/push con comandos `git` directos.
+- **Cómo evitarlo:** en repos nuevos de datastudios-scz, fijar la cuenta antes del primer push.
+
+## 2026-11-13 · `python -I` ignora PYTHONIOENCODING
+
+- **Problema:** el script terminaba con `UnicodeEncodeError` al imprimir "→" aunque se exportó `PYTHONIOENCODING=utf-8`.
+- **Causa:** el modo aislado `-I` ignora todas las variables `PYTHON*`.
+- **Solución:** `sys.stdout.reconfigure(encoding='utf-8')` dentro del script.
+
+## 2026-11-13 · Handshake TLS de Python colgado contra canva.com
+
+- **Problema:** `urllib` expiraba en el handshake TLS (intermitente); `curl --ssl-no-revoke` sí funcionaba.
+- **Solución:** `canva_extract.py` intenta urllib 30 s y cae a `curl --ssl-no-revoke`.
+
+## 2026-11-13 · Claude Code no ve skills creadas a mitad de sesión (al principio)
+
+- **Problema:** `Unknown skill` justo después de crear `.claude/skills/*`.
+- **Causa:** la carpeta no existía al iniciar la sesión; Claude Code la detectó unos minutos después.
+- **Solución:** mientras tanto, seguir el `SKILL.md` a mano; luego ya se invocan normalmente.
+
 ## 2026-11-13 · Heredoc de bash se comía las barras invertidas
 
 - **Problema:** un script Python escrito con `cat << 'EOF'` perdió los `\\`.

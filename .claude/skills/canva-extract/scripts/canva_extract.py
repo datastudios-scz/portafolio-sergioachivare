@@ -11,6 +11,7 @@ import json
 import os
 import re
 import ssl
+import subprocess
 import sys
 import urllib.request
 
@@ -25,9 +26,17 @@ EXT = {'image/png': 'png', 'image/jpeg': 'jpg', 'image/svg+xml': 'svg',
 
 
 def fetch(url, timeout=90):
-    req = urllib.request.Request(url, headers={'User-Agent': UA})
-    with urllib.request.urlopen(req, timeout=timeout, context=ssl.create_default_context()) as r:
-        return r.read()
+    """urllib primero; si falla (p. ej. handshake TLS colgado en Windows), curl --ssl-no-revoke."""
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': UA})
+        with urllib.request.urlopen(req, timeout=30, context=ssl.create_default_context()) as r:
+            return r.read()
+    except Exception as first:  # noqa: BLE001
+        cmd = ['curl', '-sSL', '--fail', '--ssl-no-revoke', '--max-time', str(timeout), '-A', UA, url]
+        try:
+            return subprocess.run(cmd, capture_output=True, check=True, timeout=timeout + 10).stdout
+        except Exception as second:  # noqa: BLE001
+            raise RuntimeError(f'No pude descargar {url[:80]}… urllib: {first} | curl: {second}') from second
 
 
 def js_unescape(t):
@@ -138,6 +147,8 @@ def best_file(m):
 
 
 def main():
+    # python -I ignora PYTHONIOENCODING: forzamos UTF-8 para que la consola de Windows no falle
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     flags = {a for a in sys.argv[1:] if a.startswith('--')}
     if len(args) != 2:
