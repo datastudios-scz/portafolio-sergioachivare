@@ -24,6 +24,7 @@ Las capturas de cada diapositiva se descargan cuando esa diapositiva queda al la
 | 2026-11-13 | Primera publicación | 100 / 96 / 100 / 100 | 1,2 s | 50 ms | 159 KB |
 | 2026-11-13 | Fuente recortada (90 → 53 KB) | 98 / 95 / 100 / 100 | 1,7 s | 140 ms | 123 KB |
 | 2026-11-13 | Sin layout forzado al arrancar + arreglos de A11y | **100 / 100 / 100 / 100** | 1,4–1,6 s | 0–20 ms | 123 KB |
+| 2026-11-13 | Rediseño v2: 17 diapositivas, 4 maquetas animadas, íconos SVG (HTML 91 KB sin comprimir) | 99 / 100 / 100 / 100 | 1,6 s | 80 ms | 134 KB |
 
 (La variación de LCP entre corridas en vivo es de ±0,3 s por la red; se toman dos corridas.)
 
