@@ -142,6 +142,7 @@ const deck = {
       this.busy = true;
       from.inert = true;
       fx.leave(from);
+      fx.prepare(to);
       transition(from, to, dir).then(done);
       clearTimeout(this.tSurface);
       clearTimeout(this.tEnter);
@@ -367,6 +368,9 @@ const fx = {
     $$('.ide__prompt [data-q]').forEach((q) => { q.dataset.full = q.textContent; });
     $$('[data-fx]').forEach((el) => FX[el.dataset.fx]?.init?.(el));
   },
+  // justo antes de que la diapositiva vuelva a verse: cada escena regresa a su cuadro inicial sin animar,
+  // así durante la transición no asoma el final de la visita anterior (lo deja listo enter → el._reset)
+  prepare(slide) { if (slide) $$('[data-fx]', slide).forEach((el) => el._reset?.()); },
   enter(slide, first, resume) { if (slide) $$('[data-fx]', slide).forEach((el) => FX[el.dataset.fx]?.enter?.(el, first, resume)); },
   leave(slide, pause) {
     if (!slide) return;
@@ -537,6 +541,7 @@ function renderPortrait(st, t) {
 FX.count = {
   enter(el, first, resume) {
     if (resume) return;
+    el._reset = RM ? null : () => $$('[data-count]', el).forEach((n) => { n.textContent = `${n.dataset.prefix || ''}0`; });
     $$('[data-count]', el).forEach((n) => {
       const to = +n.dataset.count, pre = n.dataset.prefix || '';
       cancelAnimationFrame(n._raf);
@@ -614,17 +619,21 @@ FX.portal = {
     const m = $('.pmock', el), user = $('[data-user]', m), pass = $('[data-pass]', m);
     const inputs = $$('.plogin__input', m), btn = $('.plogin__btn', m);
     const at = seq(el);
-    if (RM) { setBrand(m, BRANDS[0]); m.classList.add('is-app'); return; }
+    if (RM) { el._reset = null; setBrand(m, BRANDS[0]); m.classList.add('is-app'); return; }
+    const reset = () => {
+      m.classList.remove('is-app');
+      btn.classList.remove('is-busy', 'is-press');
+      inputs.forEach((i) => i.classList.remove('is-focus'));
+      user.textContent = pass.textContent = '';
+    };
+    el._reset = reset;
     let k = 0;
     const cycle = () => {
       el._seq = []; // los temporizadores anteriores ya se ejecutaron
       setBrand(m, BRANDS[k % BRANDS.length]);
-      m.classList.remove('is-app');
-      btn.classList.remove('is-busy', 'is-press');
-      inputs.forEach((i) => i.classList.remove('is-focus'));
+      reset();
       at(450, () => inputs[0].classList.add('is-focus'));
       let t = typeInto(at, user, 'mariana.s', 550, 75);
-      pass.textContent = '';
       at(t + 200, () => { inputs[0].classList.remove('is-focus'); inputs[1].classList.add('is-focus'); });
       t = typeInto(at, pass, '••••••••', t + 300, 65);
       at(t + 250, () => { inputs[1].classList.remove('is-focus'); btn.classList.add('is-press'); });
@@ -650,6 +659,7 @@ FX.aichat = {
     const show = (n, on = true) => n.classList.toggle('is-shown', on);
     const at = seq(el);
     if (RM) {
+      el._reset = null;
       m.classList.add('is-open');
       hello.classList.add('is-gone');
       q.textContent = text;
@@ -670,8 +680,11 @@ FX.aichat = {
       at(170, () => { cur.classList.remove('is-click'); node?.classList.remove('is-press'); });
     };
     const toBottom = () => { thread.scrollTop = thread.scrollHeight; };
-    const run = () => {
-      el._seq = [];
+    const aside = $('.vchat', m);
+    // cuadro inicial, aplicado al instante (sin transiciones ni desplazamiento suave)
+    const reset = () => {
+      aside.style.transition = cur.style.transition = 'none';
+      thread.style.scrollBehavior = 'auto';
       m.classList.remove('is-open');
       hello.classList.remove('is-gone');
       parts.forEach((n) => show(n, false));
@@ -681,10 +694,14 @@ FX.aichat = {
       field.classList.remove('is-focus', 'has-text');
       thread.scrollTop = 0;
       cur.classList.remove('is-on');
-      cur.style.transition = 'none';
       moveTo(app, .3, .85);
-      void cur.offsetWidth; // aplica la posición inicial sin animarla
-      cur.style.transition = '';
+      void aside.offsetWidth; // fija este estado antes de devolver las transiciones
+      aside.style.transition = cur.style.transition = thread.style.scrollBehavior = '';
+    };
+    el._reset = reset;
+    const run = () => {
+      el._seq = [];
+      reset();
       at(450, () => cur.classList.add('is-on'));
       at(650, () => moveTo(tab, .45, .5));
       at(1500, () => { click(tab); m.classList.add('is-open'); });
@@ -741,14 +758,18 @@ function codeScene(el, { text, msPerChar, onShow, reset, finish, hold }) {
     lines.forEach((l) => l.dataset.show && onShow(l.dataset.show, true));
     done.classList.add('is-shown');
   };
-  if (RM) { showAll(); return; }
-  const run = () => {
-    el._seq = [];
+  if (RM) { el._reset = null; showAll(); return; }
+  const resetAll = () => {
     reset();
     prompt.classList.remove('is-sent');
     status?.classList.remove('is-shown');
     done.classList.remove('is-shown');
     lines.forEach((l) => l.classList.remove('is-typed'));
+  };
+  el._reset = resetAll;
+  const run = () => {
+    el._seq = [];
+    resetAll();
     let t = typeInto(at, q, text, 400, 24) + 200;
     at(t, () => prompt.classList.add('is-sent'));
     if (status) { at(t + 250, () => status.classList.add('is-shown')); t += 300; }
@@ -882,6 +903,7 @@ FX.aimap = {
     const hot = (keys) => keys.forEach((k) => $$(`[data-l="${k}"], [data-n="${k}"]`, el).forEach((n) => n.classList.add('is-hot')));
     const at = seq(el);
     if (RM) {
+      el._reset = null;
       scenes.forEach((p, i) => p.classList.toggle('is-on', i === 0));
       q.textContent = AIMAP[0].text;
       prompt.classList.add('is-sent');
@@ -892,18 +914,20 @@ FX.aimap = {
       return;
     }
     svg?.unpauseAnimations?.();
+    const reset = () => {
+      $$('.is-hot', el).forEach((n) => n.classList.remove('is-hot'));
+      done.classList.remove('is-shown');
+      prompt.classList.remove('is-sent');
+      $$('.code .l', el).forEach((l) => l.classList.remove('is-typed'));
+    };
+    el._reset = reset;
     let k = 0;
     const run = () => {
       el._seq = [];
       const s = AIMAP[k % AIMAP.length], pre = scenes[k % AIMAP.length];
-      $$('.is-hot', el).forEach((n) => n.classList.remove('is-hot'));
-      done.classList.remove('is-shown');
+      reset();
       done.textContent = s.done; // oculto, pero ya ocupa su lugar: el mapa no se mueve al aparecer
-      prompt.classList.remove('is-sent');
-      scenes.forEach((p) => {
-        p.classList.toggle('is-on', p === pre);
-        $$('.l', p).forEach((l) => l.classList.remove('is-typed'));
-      });
+      scenes.forEach((p) => p.classList.toggle('is-on', p === pre));
       let t = typeInto(at, q, s.text, 500, 26) + 200;
       at(t, () => prompt.classList.add('is-sent'));
       t += 400;
@@ -932,8 +956,9 @@ FX.chat = {
     const msgs = $$('.msg', el);
     (el._timers || []).forEach(clearTimeout);
     el._timers = [];
-    if (RM) { msgs.forEach((m) => m.classList.add('is-shown')); return; }
-    msgs.forEach((m) => m.classList.remove('is-shown'));
+    if (RM) { el._reset = null; msgs.forEach((m) => m.classList.add('is-shown')); return; }
+    el._reset = () => msgs.forEach((m) => m.classList.remove('is-shown'));
+    el._reset();
     msgs.forEach((m, i) => el._timers.push(setTimeout(() => m.classList.add('is-shown'), 450 + i * 950)));
   },
   leave(el, pause) {

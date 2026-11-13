@@ -85,6 +85,10 @@ Con movimiento reducido, sin JS o al imprimir se ve directamente el estado final
 Contrato de un efecto: `FX.nombre = { init(el), enter(el, primeraVez, reanudar), leave(el, pausa) }`. Nada de
 `requestAnimationFrame` corriendo fuera de su diapositiva.
 
+Al volver a una diapositiva ya vista, `deck.show()` llama a `fx.prepare(to)` antes de empezar la transición: cada
+escena que dejó `el._reset` (lo define su `enter`) vuelve a su cuadro inicial sin animar. Sin esto, durante los
+300 ms previos a `.is-play` asomaba el final de la visita anterior y después saltaba al inicio.
+
 ## Datos personales
 
 Las capturas se anonimizan en el pipeline de imágenes (`redact` en `tools/images.json`), sobre la imagen original y
