@@ -573,10 +573,12 @@ dialog::backdrop { background: rgba(8, 6, 30, .72); backdrop-filter: blur(3px); 
   .bar__btn { padding: 0 11px; }
   .slide__scroll { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
   h2 { font-size: clamp(2rem, 9.4vw, 2.6rem); }
-  .hero { grid-template-columns: 1fr; }
-  .hero__portrait { order: -1; max-width: 300px; }
+  .hero { grid-template-columns: 1fr; row-gap: 16px; }
+  .hero__portrait { order: -1; max-width: min(250px, 30svh); }
   .hero__name { font-size: clamp(3.1rem, 15vw, 4.4rem); }
-  .hero__cta .btn { flex: 1 1 auto; justify-content: center; }
+  .hero__cta { flex-wrap: nowrap; margin-top: 1.3rem; }
+  .hero__cta .btn { flex: 1 1 auto; justify-content: center; padding: 0 1em; }
+  .hide-sm { display: none; }
   .hero__scroll { display: none; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .pillars { grid-template-columns: 1fr; }
