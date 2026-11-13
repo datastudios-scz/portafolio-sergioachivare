@@ -24,14 +24,20 @@ await mkdir(outDir, { recursive: true });
 
 const manifestPath = path.join(outDir, 'manifest.json');
 let manifest = {};
-try { manifest = JSON.parse(await readFile(manifestPath, 'utf8')); } catch { /* primero */ }
+try {
+  manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+} catch (err) {
+  // solo "no existe" significa primera vez; un JSON roto no debe borrar entradas en silencio
+  if (err.code !== 'ENOENT') throw new Error(`No pude leer ${manifestPath}: ${err.message}`);
+}
 
 const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 let totalIn = 0, totalOut = 0;
 
 for (const img of cfg.images) {
   const opts = { ...defaults, ...img };
-  let buf = await sharp(img.src, { failOn: 'none' }).png().toBuffer();
+  // failOn 'error': un PNG truncado (descarga cortada) falla en vez de publicarse a medias
+  let buf = await sharp(img.src, { failOn: 'error' }).png().toBuffer();
   // 1) redact sobre la imagen ORIGINAL (sus coordenadas son de la fuente): difumina
   //    credenciales, documentos, teléfonos y nombres de terceros
   if (img.redact?.length) {
@@ -55,10 +61,12 @@ for (const img of cfg.images) {
     const resized = sharp(buf).resize({ width: w, withoutEnlargement: true });
     const avifName = `${img.name}-${w}.avif`;
     const webpName = `${img.name}-${w}.webp`;
-    const avif = await resized.clone().avif({ quality: opts.avif, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer();
-    const webp = await resized.clone().webp({ quality: opts.webp, effort: 6, smartSubsample: true }).toBuffer();
-    await writeFile(path.join(outDir, avifName), avif);
-    await writeFile(path.join(outDir, webpName), webp);
+    // AVIF y WebP son independientes: se codifican en paralelo (libvips usa otros hilos)
+    const [avif, webp] = await Promise.all([
+      resized.clone().avif({ quality: opts.avif, effort: 6, chromaSubsampling: '4:4:4' }).toBuffer(),
+      resized.clone().webp({ quality: opts.webp, effort: 6, smartSubsample: true }).toBuffer(),
+    ]);
+    await Promise.all([writeFile(path.join(outDir, avifName), avif), writeFile(path.join(outDir, webpName), webp)]);
     totalOut += avif.length + webp.length;
     files.push({ w, avif: avifName, webp: webpName, avifBytes: avif.length, webpBytes: webp.length });
   }

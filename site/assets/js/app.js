@@ -50,6 +50,7 @@ function gauss(r) { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); re
 const loadImg = (src) => new Promise((ok, ko) => { const i = new Image(); i.decoding = 'async'; i.onload = () => ok(i); i.onerror = ko; i.src = src; });
 const fontsReady = () => Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 900))]);
 const overlayOpen = () => !!$('dialog[open]');
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 /* marca .has-more cuando la diapositiva tiene contenido por debajo del borde */
 const updateMore = (sc) => sc && sc.classList.toggle('has-more', sc.scrollHeight - sc.clientHeight - sc.scrollTop > 24);
 
@@ -92,7 +93,8 @@ const deck = {
 
   go(k, opts = {}) {
     k = clamp(k, 0, this.n - 1);
-    if (k === this.i) return false;
+    // pedir la diapositiva a la que ya se está yendo anula cualquier navegación en cola
+    if (k === this.i) { this.pending = null; return false; }
     if (this.busy) { this.pending = [k, opts]; return false; }
     this.show(k, opts);
     return true;
@@ -112,9 +114,10 @@ const deck = {
     to.inert = false;
 
     const sc = $('.slide__scroll', to);
-    // en la carga inicial no se toca scrollTop: forzaría el layout dentro de la tarea del script
+    // en la carga inicial scrollTop se toca en el cuadro siguiente: así no fuerza el layout
+    // dentro de la tarea del script, pero la diapositiva igual empieza arriba
     if (sc && !instant) sc.scrollTop = dir < 0 ? sc.scrollHeight : 0;
-    if (sc) requestAnimationFrame(() => updateMore(sc));
+    if (sc) requestAnimationFrame(() => { if (instant && sc.scrollTop) sc.scrollTop = 0; updateMore(sc); });
 
     const done = () => {
       if (from && from !== to) { from.classList.remove('is-active', 'is-leaving'); from.inert = true; }
@@ -132,8 +135,13 @@ const deck = {
       from.inert = true;
       fx.leave(from);
       transition(from, to, dir).then(done);
-      setTimeout(() => { document.documentElement.dataset.surface = to.dataset.theme; }, RM ? 0 : 330);
-      setTimeout(() => fx.enter(to, false), RM ? 0 : 300);
+      clearTimeout(this.tSurface);
+      clearTimeout(this.tEnter);
+      this.tSurface = setTimeout(() => { document.documentElement.dataset.surface = to.dataset.theme; }, RM ? 0 : 330);
+      // si la pestaña se ocultó en medio de la transición, los efectos arrancan al volver
+      this.tEnter = setTimeout(() => {
+        if (document.hidden) this.enterOnShow = true; else fx.enter(to, false);
+      }, RM ? 0 : 300);
     }
 
     rail.update(k, prevIndex, instant);
@@ -193,7 +201,10 @@ const rail = {
       a.className = 'rail__node';
       a.href = `#${s.id}`;
       a.setAttribute('aria-label', `${k + 1}. ${s.dataset.title}`);
-      a.innerHTML = `<span class="rail__label">${s.dataset.title}</span>`;
+      const label = document.createElement('span');
+      label.className = 'rail__label';
+      label.textContent = s.dataset.title;
+      a.append(label);
       li.append(a);
       ol.append(li);
       return a;
@@ -331,7 +342,10 @@ function bindInputs() {
   addEventListener('popstate', () => { const k = deck.indexOf(location.hash); deck.go(k ?? 0); });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) fx.leave(deck.current, true); else fx.enter(deck.current, false, true);
+    if (document.hidden) { fx.leave(deck.current, true); return; }
+    const full = deck.enterOnShow;
+    deck.enterOnShow = false;
+    fx.enter(deck.current, false, !full);
   });
 }
 
@@ -348,7 +362,7 @@ const fx = {
 /* ---------- Portada: retrato que nace de un gráfico de dispersión ---------- */
 FX.portrait = {
   init(fig) {
-    const st = { fig, wrap: $('.portrait', fig), canvas: $('canvas', fig), hint: $('.portrait__hint', fig), played: false };
+    const st = { fig, wrap: $('.portrait', fig), canvas: $('canvas', fig), hint: $('.portrait__hint', fig), played: false, gen: 0 };
     st.ctx = st.canvas.getContext('2d');
     fig._st = st;
     st.ready = loadImg('assets/img/retrato-puntos.png')
@@ -369,11 +383,14 @@ FX.portrait = {
   },
   async enter(fig) {
     const st = fig._st;
+    // generación: si el usuario sale mientras esperamos imagen/fuente, este enter se descarta
+    const gen = ++st.gen;
     await st.ready;
-    if (st.failed) return;
+    if (st.failed || gen !== st.gen) return;
     if (RM || st.played) { renderPortrait(st, Infinity); st.hint?.classList.add('is-on'); return; }
-    st.played = true;
     await fontsReady();
+    if (gen !== st.gen) return;
+    st.played = true;
     const t0 = performance.now();
     const tick = (now) => {
       const t = (now - t0) / 1000;
@@ -385,6 +402,7 @@ FX.portrait = {
   },
   leave(fig) {
     const st = fig._st;
+    st.gen++;
     if (st.raf) { cancelAnimationFrame(st.raf); st.raf = 0; if (st.dots) renderPortrait(st, Infinity); st.hint?.classList.add('is-on'); }
     st.wrap.classList.remove('is-lens', 'is-revealed');
   },
@@ -765,9 +783,9 @@ const indexPanel = {
       if (s.dataset.chapter !== chapter) {
         if (chapter !== null) html += '</ol></div>';
         chapter = s.dataset.chapter;
-        html += `<div class="index__group"><h3>${chapter}</h3><ol>`;
+        html += `<div class="index__group"><h3>${esc(chapter)}</h3><ol>`;
       }
-      html += `<li><a href="#${s.id}" data-k="${k}"><span>${String(k + 1).padStart(2, '0')}</span>${s.dataset.title}</a></li>`;
+      html += `<li><a href="#${esc(s.id)}" data-k="${k}"><span>${String(k + 1).padStart(2, '0')}</span>${esc(s.dataset.title)}</a></li>`;
     });
     $('[data-index-list]', this.dlg).innerHTML = `${html}</ol></div>`;
     $$('[data-open-index]').forEach((b) => b.addEventListener('click', () => this.open()));

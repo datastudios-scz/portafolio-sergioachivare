@@ -46,7 +46,9 @@ function picture(a) {
   return `<a class="zoom${a['link-class'] ? ` ${a['link-class']}` : ''}" href="assets/img/${largest.webp}"${extra} data-caption="${esc(label)}" aria-label="Ampliar: ${esc(a.alt)}">${pic}<span class="zoom__hint" aria-hidden="true"><svg><use href="#i-zoom"/></svg></span></a>`;
 }
 
-html = html.replace(/<x-img\s+([\s\S]*?)\/?>/g, (_, s) => picture(parseAttrs(s)));
+// los valores entre comillas pueden contener ">" sin cortar la etiqueta
+html = html.replace(/<x-img((?:\s+[\w-]+(?:="[^"]*")?)*)\s*\/?>/g, (_, s) => picture(parseAttrs(s)));
+if (html.includes('<x-img')) throw new Error('Quedó un <x-img> sin expandir: revisa su sintaxis');
 
 for (const p of ['assets/css/app.css', 'assets/js/app.js']) {
   const buf = await readFile(new URL(`site/${p}`, root));
@@ -56,11 +58,14 @@ for (const p of ['assets/css/app.css', 'assets/js/app.js']) {
 
 await writeFile(new URL('site/index.html', root), html);
 
-// Limpieza: variantes de imagen que ya no figuran en el manifest (p. ej. tras recortar una captura)
-const keep = new Set(['manifest.json', 'retrato-puntos.png']);
+// Limpieza: solo variantes generadas (<nombre>-<ancho>.avif|webp) que ya no figuran en el manifest
+// (p. ej. tras recortar una captura). Cualquier otro archivo o carpeta en img/ se respeta.
+const keep = new Set();
 for (const m of Object.values(manifest)) for (const f of m.files) { keep.add(f.avif); keep.add(f.webp); }
 const imgDir = new URL('site/assets/img/', root);
-const orphans = (await readdir(imgDir)).filter((f) => !keep.has(f));
+const variant = /^[a-z0-9-]+-\d+\.(avif|webp)$/;
+const orphans = (await readdir(imgDir, { withFileTypes: true }))
+  .filter((d) => d.isFile() && variant.test(d.name) && !keep.has(d.name)).map((d) => d.name);
 await Promise.all(orphans.map((f) => unlink(new URL(f, imgDir))));
 if (orphans.length) console.log(`Borradas ${orphans.length} variantes huérfanas: ${orphans.join(', ')}`);
 const unused = Object.keys(manifest).filter((k) => !used.has(k));
