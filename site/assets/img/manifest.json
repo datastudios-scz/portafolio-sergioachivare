@@ -176,28 +176,28 @@
   "height": 566,
   "ratio": 2.288,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADQAQCdASoQAAcAA4BaJZACdAEO9rg7QADif7p+U/ShKWiDakmW+kgpBHVHLoc5WROxAE0t9pSbdGleI97ISYQzUceSSGdmAAA=",
+  "lqip": "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoQAAcAA4BaJZACdAEO+VzIfvAA4n+6flP0oSlog2pJq3wEjsBaUvWrF9024ulb2H3VfHVa7OC81WrrOTsU9eAA",
   "files": [
    {
     "w": 640,
     "avif": "banca-monitor-640.avif",
     "webp": "banca-monitor-640.webp",
-    "avifBytes": 22972,
-    "webpBytes": 26582
+    "avifBytes": 20542,
+    "webpBytes": 23832
    },
    {
     "w": 1080,
     "avif": "banca-monitor-1080.avif",
     "webp": "banca-monitor-1080.webp",
-    "avifBytes": 61909,
-    "webpBytes": 60496
+    "avifBytes": 52049,
+    "webpBytes": 51896
    },
    {
     "w": 1295,
     "avif": "banca-monitor-1295.avif",
     "webp": "banca-monitor-1295.webp",
-    "avifBytes": 77828,
-    "webpBytes": 83152
+    "avifBytes": 63173,
+    "webpBytes": 70910
    }
   ]
  },
@@ -206,28 +206,28 @@
   "height": 481,
   "ratio": 2.7277,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoQAAYAA4BaJagCdDiAAUo4N3zYAOJ/4Uu91trhBf+4JKWnymBOo8NKXEB5L8v3gtJRO81fybyUY+aZMAA=",
+  "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAAAQAgCdASoQAAYAA4BaJagCdDiAAUo4N3pYAOJ/4Uu91trhBf+4JKWnymBOo8NKXEB5L8v3gtJRO81fybyUY+aZ3QAAAA==",
   "files": [
    {
     "w": 640,
     "avif": "banca-registros-640.avif",
     "webp": "banca-registros-640.webp",
-    "avifBytes": 16694,
-    "webpBytes": 21216
+    "avifBytes": 15076,
+    "webpBytes": 19104
    },
    {
     "w": 1080,
     "avif": "banca-registros-1080.avif",
     "webp": "banca-registros-1080.webp",
-    "avifBytes": 59153,
-    "webpBytes": 54906
+    "avifBytes": 51532,
+    "webpBytes": 49092
    },
    {
     "w": 1312,
     "avif": "banca-registros-1312.avif",
     "webp": "banca-registros-1312.webp",
-    "avifBytes": 84103,
-    "webpBytes": 81194
+    "avifBytes": 72414,
+    "webpBytes": 71294
    }
   ]
  },
@@ -302,22 +302,22 @@
     "w": 640,
     "avif": "consumo-ciudad-640.avif",
     "webp": "consumo-ciudad-640.webp",
-    "avifBytes": 27645,
-    "webpBytes": 28632
+    "avifBytes": 25109,
+    "webpBytes": 25948
    },
    {
     "w": 1080,
     "avif": "consumo-ciudad-1080.avif",
     "webp": "consumo-ciudad-1080.webp",
-    "avifBytes": 68519,
-    "webpBytes": 66166
+    "avifBytes": 59132,
+    "webpBytes": 58336
    },
    {
     "w": 1397,
     "avif": "consumo-ciudad-1397.avif",
     "webp": "consumo-ciudad-1397.webp",
-    "avifBytes": 90439,
-    "webpBytes": 100226
+    "avifBytes": 78665,
+    "webpBytes": 87700
    }
   ]
  },
@@ -326,28 +326,28 @@
   "height": 587,
   "ratio": 2.4037,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRkoAAABXRUJQVlA4ID4AAADwAQCdASoQAAcAA4BaJQBOgCPzouieMwAA/vQSO/y0NSWp/BbdBCCytYEAN0zgTkEMKMxkjs05U6Bws0AAAA==",
+  "lqip": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADwAQCdASoQAAcAA4BaJQBOgCPzouieMwAA/vQSO/y0NSWp/BbdBCCytYEAN0zgTkEG8utTdTlToHCzQAA=",
   "files": [
    {
     "w": 640,
     "avif": "consumo-impulsacion-640.avif",
     "webp": "consumo-impulsacion-640.webp",
-    "avifBytes": 25871,
-    "webpBytes": 28144
+    "avifBytes": 23464,
+    "webpBytes": 25820
    },
    {
     "w": 1080,
     "avif": "consumo-impulsacion-1080.avif",
     "webp": "consumo-impulsacion-1080.webp",
-    "avifBytes": 83914,
-    "webpBytes": 74056
+    "avifBytes": 74234,
+    "webpBytes": 67408
    },
    {
     "w": 1411,
     "avif": "consumo-impulsacion-1411.avif",
     "webp": "consumo-impulsacion-1411.webp",
-    "avifBytes": 143981,
-    "webpBytes": 115614
+    "avifBytes": 125901,
+    "webpBytes": 103556
    }
   ]
  },
@@ -356,28 +356,28 @@
   "height": 577,
   "ratio": 2.4731,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAADwAQCdASoQAAYAA4BaJZACdAEfxHeavXAA/vZpYjBE6zlMhlv4Px6fttJBwAz2IBh2RLx+BF8DPdGZ4ZnS5UE5kAffe/aQAAA=",
+  "lqip": "data:image/webp;base64,UklGRlQAAABXRUJQVlA4IEgAAAAQAgCdASoQAAYAA4BaJZACdAEfVvsTz7MAAP72aWIwROs9MfZwwV4kZjJ+a/n2CjIaYio/Ai+BnujM8MzpcqCcyAPvvftIAAA=",
   "files": [
    {
     "w": 640,
     "avif": "rrhh-640.avif",
     "webp": "rrhh-640.webp",
-    "avifBytes": 20365,
-    "webpBytes": 23564
+    "avifBytes": 17272,
+    "webpBytes": 20148
    },
    {
     "w": 1080,
     "avif": "rrhh-1080.avif",
     "webp": "rrhh-1080.webp",
-    "avifBytes": 51112,
-    "webpBytes": 53164
+    "avifBytes": 39470,
+    "webpBytes": 42896
    },
    {
     "w": 1427,
     "avif": "rrhh-1427.avif",
     "webp": "rrhh-1427.webp",
-    "avifBytes": 69387,
-    "webpBytes": 82656
+    "avifBytes": 54014,
+    "webpBytes": 65258
    }
   ]
  },
@@ -542,22 +542,22 @@
     "w": 640,
     "avif": "sec-ad-640.avif",
     "webp": "sec-ad-640.webp",
-    "avifBytes": 20562,
-    "webpBytes": 22874
+    "avifBytes": 13811,
+    "webpBytes": 16486
    },
    {
     "w": 1080,
     "avif": "sec-ad-1080.avif",
     "webp": "sec-ad-1080.webp",
-    "avifBytes": 72559,
-    "webpBytes": 62074
+    "avifBytes": 44769,
+    "webpBytes": 40922
    },
    {
     "w": 1415,
     "avif": "sec-ad-1415.avif",
     "webp": "sec-ad-1415.webp",
-    "avifBytes": 116575,
-    "webpBytes": 105302
+    "avifBytes": 69481,
+    "webpBytes": 67774
    }
   ]
  },
@@ -572,22 +572,22 @@
     "w": 640,
     "avif": "sec-exchange-640.avif",
     "webp": "sec-exchange-640.webp",
-    "avifBytes": 14736,
-    "webpBytes": 18172
+    "avifBytes": 8515,
+    "webpBytes": 10806
    },
    {
     "w": 1080,
     "avif": "sec-exchange-1080.avif",
     "webp": "sec-exchange-1080.webp",
-    "avifBytes": 56173,
-    "webpBytes": 55966
+    "avifBytes": 28407,
+    "webpBytes": 31996
    },
    {
     "w": 1692,
     "avif": "sec-exchange-1692.avif",
     "webp": "sec-exchange-1692.webp",
-    "avifBytes": 95499,
-    "webpBytes": 115172
+    "avifBytes": 39862,
+    "webpBytes": 58174
    }
   ]
  },
@@ -596,28 +596,28 @@
   "height": 681,
   "ratio": 2.5507,
   "color": "rgb(232,216,216)",
-  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAYAA4BaJagCdAEQL8wNMUAAzj9zBxQRqOhCm4xsml2g3nVIrfNGr8PmYqiwVmLPSqf3MR5lThtMUAA=",
+  "lqip": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAADwAQCdASoQAAYAA4BaJagCdAEQL8wRG4AAzj9zBxQRqOhCm4xsml2g3nVIrfNGr8PmYrUmBfFvU56VT+5iPMqcNpigAA==",
   "files": [
    {
     "w": 640,
     "avif": "sec-accesos-640.avif",
     "webp": "sec-accesos-640.webp",
-    "avifBytes": 17512,
-    "webpBytes": 21452
+    "avifBytes": 15102,
+    "webpBytes": 18786
    },
    {
     "w": 1080,
     "avif": "sec-accesos-1080.avif",
     "webp": "sec-accesos-1080.webp",
-    "avifBytes": 67242,
-    "webpBytes": 66212
+    "avifBytes": 56380,
+    "webpBytes": 56610
    },
    {
     "w": 1737,
     "avif": "sec-accesos-1737.avif",
     "webp": "sec-accesos-1737.webp",
-    "avifBytes": 135228,
-    "webpBytes": 155018
+    "avifBytes": 111660,
+    "webpBytes": 132358
    }
   ]
  },
@@ -734,28 +734,28 @@
   "height": 638,
   "ratio": 2.1583,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADQAQCdASoQAAcAA4BaJZQAAqH+Jfj2AAD+8/UNu+02PHt8CICdcMq8CsdPft1k1V4B4SLW6k3NdkAA",
+  "lqip": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAADQAQCdASoQAAcAA4BaJZQAAqH+KblUYAD+8/UNu+02PHt8CICdS/XFTdq1PYBoenWYnDWd/XZAAA==",
   "files": [
    {
     "w": 640,
     "avif": "app-asistencia-panel-640.avif",
     "webp": "app-asistencia-panel-640.webp",
-    "avifBytes": 21138,
-    "webpBytes": 23560
+    "avifBytes": 17341,
+    "webpBytes": 20140
    },
    {
     "w": 1080,
     "avif": "app-asistencia-panel-1080.avif",
     "webp": "app-asistencia-panel-1080.webp",
-    "avifBytes": 49302,
-    "webpBytes": 55550
+    "avifBytes": 38359,
+    "webpBytes": 45392
    },
    {
     "w": 1377,
     "avif": "app-asistencia-panel-1377.avif",
     "webp": "app-asistencia-panel-1377.webp",
-    "avifBytes": 73675,
-    "webpBytes": 81846
+    "avifBytes": 55358,
+    "webpBytes": 66826
    }
   ]
  },
@@ -812,21 +812,21 @@
   "height": 602,
   "ratio": 1.794,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACwAQCdASoQAAkAA4BaJYwAAp1HwShAAP73KsUAhvHY9phgZh1s8Phjt5SuupP6xKX6dA9vhluAAA==",
+  "lqip": "data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACwAQCdASoQAAkAA4BaJYwAAp1HwShAAP73KsUAhvHY9phgZh1s8Phjt5Sut6dvIrPe+RzgKAAAAA==",
   "files": [
    {
     "w": 640,
     "avif": "app-accidentes-panel-640.avif",
     "webp": "app-accidentes-panel-640.webp",
-    "avifBytes": 57047,
-    "webpBytes": 57122
+    "avifBytes": 44356,
+    "webpBytes": 46756
    },
    {
     "w": 1080,
     "avif": "app-accidentes-panel-1080.avif",
     "webp": "app-accidentes-panel-1080.webp",
-    "avifBytes": 136007,
-    "webpBytes": 140542
+    "avifBytes": 101464,
+    "webpBytes": 112264
    }
   ]
  },
@@ -883,28 +883,28 @@
   "height": 667,
   "ratio": 2.0045,
   "color": "rgb(248,248,248)",
-  "lqip": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAAAQAgCdASoQAAgAA4BaJZQC7AEf/xasniYAAP7yhMabM2l+PAQ3Buohh+4AYNpn2EhRYcRVdmmVDpAwaA01aE2AAAA=",
+  "lqip": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAAAQAgCdASoQAAgAA4BaJZQC7AEfnRdwKEUAAP7yhMabM2l+PTdwjlV1VTXu9wadKQlH8VXZplQ6QMGgNNWhNgAA",
   "files": [
    {
     "w": 640,
     "avif": "app-comercios-panel-640.avif",
     "webp": "app-comercios-panel-640.webp",
-    "avifBytes": 27869,
-    "webpBytes": 30302
+    "avifBytes": 22068,
+    "webpBytes": 24894
    },
    {
     "w": 1080,
     "avif": "app-comercios-panel-1080.avif",
     "webp": "app-comercios-panel-1080.webp",
-    "avifBytes": 79591,
-    "webpBytes": 73848
+    "avifBytes": 55776,
+    "webpBytes": 54868
    },
    {
     "w": 1337,
     "avif": "app-comercios-panel-1337.avif",
     "webp": "app-comercios-panel-1337.webp",
-    "avifBytes": 96286,
-    "webpBytes": 101726
+    "avifBytes": 66977,
+    "webpBytes": 74526
    }
   ]
  },
