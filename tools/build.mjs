@@ -3,7 +3,7 @@
 //   con AVIF (solo si pesa menos que WebP) + WebP, width/height reales y placeholder (color + blur).
 // - Versiona assets/css/app.css y assets/js/app.js con un hash de contenido (?v=…) para invalidar cachés.
 // Uso: node tools/build.mjs
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, readdir, unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 
 const root = new URL('../', import.meta.url);
@@ -55,6 +55,14 @@ for (const p of ['assets/css/app.css', 'assets/js/app.js']) {
 }
 
 await writeFile(new URL('site/index.html', root), html);
+
+// Limpieza: variantes de imagen que ya no figuran en el manifest (p. ej. tras recortar una captura)
+const keep = new Set(['manifest.json', 'retrato-puntos.png']);
+for (const m of Object.values(manifest)) for (const f of m.files) { keep.add(f.avif); keep.add(f.webp); }
+const imgDir = new URL('site/assets/img/', root);
+const orphans = (await readdir(imgDir)).filter((f) => !keep.has(f));
+await Promise.all(orphans.map((f) => unlink(new URL(f, imgDir))));
+if (orphans.length) console.log(`Borradas ${orphans.length} variantes huérfanas: ${orphans.join(', ')}`);
 const unused = Object.keys(manifest).filter((k) => !used.has(k));
 console.log(`site/index.html listo · ${(Buffer.byteLength(html) / 1024).toFixed(1)} KB · ${used.size} imágenes usadas`
   + (unused.length ? ` · sin usar: ${unused.join(', ')}` : ''));

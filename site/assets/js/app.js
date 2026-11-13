@@ -50,6 +50,8 @@ function gauss(r) { let u = 0, v = 0; while (!u) u = r(); while (!v) v = r(); re
 const loadImg = (src) => new Promise((ok, ko) => { const i = new Image(); i.decoding = 'async'; i.onload = () => ok(i); i.onerror = ko; i.src = src; });
 const fontsReady = () => Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 900))]);
 const overlayOpen = () => !!$('dialog[open]');
+/* marca .has-more cuando la diapositiva tiene contenido por debajo del borde */
+const updateMore = (sc) => sc && sc.classList.toggle('has-more', sc.scrollHeight - sc.clientHeight - sc.scrollTop > 24);
 
 /* =====================================================================
    DECK
@@ -71,6 +73,12 @@ const deck = {
     this.wipe.setAttribute('aria-hidden', 'true');
     document.body.append(this.wipe);
     rail.init(this.slides);
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => updateMore(e.target.parentElement)));
+    $$('.slide__scroll').forEach((sc) => {
+      sc.addEventListener('scroll', () => updateMore(sc), { passive: true });
+      if (sc.firstElementChild) ro.observe(sc.firstElementChild);
+    });
+    addEventListener('resize', () => updateMore($('.slide__scroll', this.current)));
     const start = this.indexOf(location.hash) ?? 0;
     this.show(start, { instant: true, keepUrl: !location.hash });
   },
@@ -104,7 +112,7 @@ const deck = {
     to.inert = false;
 
     const sc = $('.slide__scroll', to);
-    if (sc) sc.scrollTop = dir < 0 && !instant ? sc.scrollHeight : 0;
+    if (sc) { sc.scrollTop = dir < 0 && !instant ? sc.scrollHeight : 0; requestAnimationFrame(() => updateMore(sc)); }
 
     const done = () => {
       if (from && from !== to) { from.classList.remove('is-active', 'is-leaving'); from.inert = true; }

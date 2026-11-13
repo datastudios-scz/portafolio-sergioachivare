@@ -31,11 +31,9 @@ let totalIn = 0, totalOut = 0;
 
 for (const img of cfg.images) {
   const opts = { ...defaults, ...img };
-  let base = sharp(img.src, { failOn: 'none' });
-  if (img.crop) base = base.extract(img.crop);
-  if (img.trim) base = base.trim({ threshold: 8 });
-  let buf = await base.png().toBuffer();
-  // redact: difumina zonas con datos sensibles (credenciales, documentos, teléfonos)
+  let buf = await sharp(img.src, { failOn: 'none' }).png().toBuffer();
+  // 1) redact sobre la imagen ORIGINAL (sus coordenadas son de la fuente): difumina
+  //    credenciales, documentos, teléfonos y nombres de terceros
   if (img.redact?.length) {
     const layers = [];
     for (const r of img.redact) {
@@ -44,6 +42,9 @@ for (const img of cfg.images) {
     }
     buf = await sharp(buf).composite(layers).png().toBuffer();
   }
+  // 2) recorte explícito y/o de márgenes uniformes, después del redact
+  if (img.crop) buf = await sharp(buf).extract(img.crop).png().toBuffer();
+  if (img.trim) buf = await sharp(buf).trim({ threshold: 10 }).png().toBuffer();
   const meta = await sharp(buf).metadata();
   const srcSize = (await stat(img.src)).size;
   totalIn += srcSize;

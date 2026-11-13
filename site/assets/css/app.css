@@ -198,6 +198,11 @@ strong { font-weight: 680; }
   -webkit-overflow-scrolling: touch;
 }
 .slide__inner { margin-block: auto; width: 100%; max-width: 1480px; margin-inline: auto; }
+/* pista de "hay más abajo" cuando la diapositiva es más alta que la pantalla */
+.slide__scroll.has-more {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 90px), rgba(0, 0, 0, .15) calc(100% - 10px));
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 90px), rgba(0, 0, 0, .15) calc(100% - 10px));
+}
 .wipe {
   position: fixed; left: 0; right: 0; top: 0; height: 2px; z-index: 30; pointer-events: none;
   background: var(--saffron); box-shadow: 0 0 14px rgba(255, 194, 51, .7); opacity: 0;
@@ -609,11 +614,21 @@ dialog::backdrop { background: rgba(8, 6, 30, .72); backdrop-filter: blur(3px); 
   .rail__step { display: inline-grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: var(--radius-s); }
   .rail__step svg { width: 22px; height: 22px; }
 }
-@media (max-height: 720px) and (min-width: 761px) {
+/* escritorio: las capturas se dimensionan también por la altura disponible */
+@media (min-width: 761px) {
+  .grid-4 .shot img { width: auto; max-width: 100%; max-height: calc((100dvh - 330px) / 2); }
+  .stack-2 .shot img { width: auto; max-width: 100%; max-height: calc((100dvh - 190px) / 2); }
+}
+@media (max-height: 800px) and (min-width: 761px) {
   :root { --bar-h: 58px; }
   h2 { font-size: clamp(1.9rem, 3.6vw, 3.2rem); }
   .hero__name { font-size: clamp(3rem, 7.2vw, 6.6rem); }
   .slide__scroll { padding-bottom: 24px; }
+  .lead { font-size: 1.02rem; }
+  .checks { gap: 6px; margin-top: 1rem; }
+  .chat { margin-top: 1rem; padding: 10px 12px; }
+  .msg { font-size: .84rem; padding: 6px 10px; }
+  .slide__head { margin-bottom: 14px; }
 }
 
 /* ---------- Sin JS: página larga normal ---------- */
