@@ -21,9 +21,10 @@ Claude Code en esta carpeta las tiene disponibles.
 | Skill | Paso |
 |---|---|
 | `skill-creator` | Crear las skills propias de arriba |
-| `frontend-design` | Dirección visual, tipografía, layout |
-| `animate` | Coreografía de animaciones |
-| `code-review` / `simplify` | Revisión de código antes de publicar |
+| `frontend-design` | Dirección visual, tipografía, layout (ver `design.md`) |
+| `animate` | Es para videos en canvas; se tomaron sus reglas de movimiento (resortes de forma cerrada) |
+| `update-config` | Pedido de "no pedir aprobación de GitHub": se resolvió fijando la cuenta de Git Credential Manager del repo |
+| `code-review` | Revisión de correctitud del código antes de cerrar |
 
 ## Notas
 
