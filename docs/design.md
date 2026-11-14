@@ -126,6 +126,20 @@ Portada (oscura)                                Caso (clara)
   cualquier proceso con cualquier IA, en la nube o en servidores propios".
 - **Cierre:** "Gracias por tu visita a mi portafolio".
 
+## Cuarta ronda (2026-11-14), pedidos del dueño
+
+- **Gobernanza dentro de un pilar, no en una diapositiva aparte:** el pilar de seguridad pasa a "Seguridad y
+  gobernanza". El orden de sus ítems cuenta el ciclo: la norma (ISO 27001, ASFI) → políticas, procesos y
+  procedimientos → creación y gestión documental → dueños y custodios del dato → accesos (IAM) y auditoría. La línea
+  final del pilar (la que dice "cómo lo hago") es "Coordinación con dirección y gerencia".
+- **Mismo alto que los demás:** el pilar más alto fija el alto del templo, y en 1280×720 y 1024×768 el margen era de
+  ~50 px. Por eso accesos y auditoría van en un solo ítem, y Exchange Online y PowerShell pasan al pilar de cloud
+  (junto a SharePoint y Azure CLI, donde también encajan). Nada se quitó del sitio.
+- **Cortes balanceados:** `text-wrap: balance` en los ítems y la línea final de los pilares: ninguna palabra queda
+  sola en la segunda línea ("normativa ASFI", "custodios del dato").
+- **Bajada:** "Cada herramienta y cada práctica de estos pilares la he aplicado en empresas reales", porque ahora los
+  pilares también tienen normas y prácticas, no solo herramientas.
+
 ## Revisión contra lo genérico (antes de construir)
 
 | Idea inicial | Por qué era genérica | Cambio |

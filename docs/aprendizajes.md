@@ -170,3 +170,16 @@ Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución �
 - **Solución:** reportar la mediana de varias corridas y confirmar con un perfil real: Playwright + CDP con
   `Emulation.setCPUThrottlingRate` (×4) y `Profiler` para ver qué función gasta el tiempo.
 - **Cómo evitarlo:** no correr Lighthouse con otras cargas en paralelo (otro Chrome, compilaciones, capturas).
+
+## 2026-11-14 · Un pilar más largo empuja todo el templo
+
+- **Problema:** al sumar gobernanza al pilar de seguridad, la diapositiva de pilares pasó a tener scroll interno
+  (20 px) en 1280×720 y 1024×768, y varios ítems dejaban una palabra sola en la segunda línea.
+- **Causa:** los cinco pilares son una fila de grilla: el más alto fija el alto de todos. Las columnas dan ~23
+  caracteres por línea entre 1280 y 1440 px; cada ítem de dos líneas suma ~18 px más 6 px de separación.
+- **Solución:** probar redacciones inyectándolas en la página con Playwright y medir el `scrollHeight` de la
+  diapositiva y el alto de cada pilar en 6 tamaños. Quedó la que cabe en todos: 5 ítems (accesos y auditoría
+  juntos) y dos herramientas en el pilar de cloud. Los cortes se arreglaron con `text-wrap: balance`, que reparte las
+  palabras sin sumar líneas.
+- **Cómo evitarlo:** antes de alargar un pilar, comparar sus líneas con las del más alto en 1280×720 y 1024×768
+  (los tamaños con menos margen).

@@ -410,11 +410,11 @@ strong { font-weight: 680; }
 }
 .pillar__shaft h3 { margin-bottom: 11px; font-size: clamp(1rem, 1.2vw, 1.18rem); }
 .pillar__shaft ul { display: grid; gap: 6px; }
-.pillar__shaft li { position: relative; padding-left: 13px; font-size: .89rem; line-height: 1.25; }
+.pillar__shaft li { position: relative; padding-left: 13px; font-size: .89rem; line-height: 1.25; text-wrap: balance; }
 .pillar__shaft li::before {
   content: ""; position: absolute; left: 0; top: .48em; width: 5px; height: 5px; border-radius: 1px; background: var(--saffron);
 }
-.pillar__langs { margin-top: 11px; font-size: .83rem; color: var(--muted); }
+.pillar__langs { margin-top: 11px; font-size: .83rem; color: var(--muted); text-wrap: balance; }
 .pillar__base { height: 16px; margin: 0 -7px; background: #2A2470; border: 1px solid var(--line-strong); border-radius: 2px; }
 .pillar:hover .pillar__cap { background: var(--saffron); color: var(--ink); }
 .pillar:hover .pillar__shaft { border-color: rgba(255, 194, 51, .45); }

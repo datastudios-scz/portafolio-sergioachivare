@@ -7,12 +7,16 @@ sin nombrar el negocio), sus capacidades de desarrollo y agentes, y la infraestr
 Tercera ronda (2026-11-13): portada sin el cargo actual; login y chat del portal rehechos con el diseño del producto
 real (sin sus datos); fuera el bloque "Portales reales en producción"; pestañas con recorrido guiado; la IA pasó de
 captura a animación; el cierre dice "Gracias por tu visita a mi portafolio".
+Cuarta ronda (2026-11-14): la experiencia es de **10 años** (corrección del dueño; el Canva decía 8) y el pilar de
+seguridad pasa a "Seguridad y gobernanza" con lo que el dueño hace en gobierno de datos: ISO 27001 y normativa ASFI,
+políticas, procesos y procedimientos, creación y gestión documental, dueños y custodios del dato y coordinación con
+dirección y gerencia.
 
 | # | Diapositiva (`#id`) | Viene de | Contenido / imágenes | Notas |
 |---|---|---|---|---|
 | 1 | Portada `#inicio` | Canva 1 | `retrato` | Título "Arquitecto de soluciones de datos e IA" y bajada con infraestructura, datos, BI, apps y agentes; sin el cargo actual; un solo botón (WhatsApp) |
-| 2 | Perfil `#perfil` | Canva 2 | — | Cifras: 8 años, 12 rubros, 7 empresas, +1000 usuarios |
-| 3 | Pilares `#stack` | Canva 1, 2, 4 | — | Cinco pilares con viga y base, animados |
+| 2 | Perfil `#perfil` | Canva 2 | — | Título "Diez años conectando…"; cifras: 10 años, 12 rubros, 7 empresas, +1000 usuarios |
+| 3 | Pilares `#stack` | Canva 1, 2, 4 + pedido del dueño | — | Cinco pilares con viga y base ("10 años en…"), animados. "Seguridad y gobernanza": ISO 27001 y normativa ASFI, políticas/procesos/procedimientos, gestión documental, dueños y custodios, accesos (IAM) y auditoría; cierra con "Coordinación con dirección y gerencia". Exchange Online y PowerShell están en el de cloud |
 | 4 | Arquitectura completa `#arquitectura` | Canva 3 | — | Capas: infraestructura → datos y desarrollos → Portal BI + IA → clientes |
 | 5 | Portal BI `#portal` | Canva 4–9 + contenido del Portal BI del dueño | maqueta HTML: login de vidrio como el real → 9 tableros | Receta Azure + Power BI + Desarrollo + Seguridad = Portal BI + IA; usuario y contraseña se tipean, "Ingresar" carga |
 | 6 | Portal BI con IA `#portal-ia` | contenido y diseño del Portal BI del dueño | visor del tablero con el chat al costado | Un cursor abre el chat, tipea la pregunta, se ven los pasos, el DAX, la respuesta y el gráfico a pedido |
