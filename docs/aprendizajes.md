@@ -2,12 +2,15 @@
 
 Bitácora de lecciones no obvias. Formato: **Problema → Causa → Solución → Cómo evitarlo**.
 
-## 2026-11-13 · curl falla contra canva.com en Windows
+## 2026-11-13 · curl falla contra HTTPS en Windows (canva.com, github.io)
 
-- **Problema:** `curl` devolvía código 000 / error 35 al descargar el link de Canva.
+- **Problema:** `curl` devolvía código 000 / error 35 al descargar el link de Canva. El 2026-11-14 pasó lo mismo al
+  verificar el sitio publicado en github.io: con `-s` la respuesta vacía parecía un sitio sin actualizar.
 - **Causa:** schannel (TLS de Windows) no pudo verificar la revocación del certificado: `CRYPT_E_NO_REVOCATION_CHECK`.
+  Pasa con cualquier sitio HTTPS desde esta laptop, no solo con Canva.
 - **Solución:** `curl --ssl-no-revoke …` o descargar con `urllib` de Python (no hace esa verificación).
-- **Cómo evitarlo:** los scripts del proyecto usan Python o pasan `--ssl-no-revoke`.
+- **Cómo evitarlo:** los scripts del proyecto usan Python o pasan `--ssl-no-revoke`. Un curl vacío (código 000) es
+  este error, no un sitio caído ni en caché: usar `-sS` para ver el mensaje.
 
 ## 2026-11-13 · El link "view" de Canva ya trae todo el diseño
 
